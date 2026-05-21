@@ -3,29 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil & Unduhan Game Premium</title>
+    <title>WINORO HADI MUKTI - Game Developer & Content Creator</title>
     
-    <!-- Open Graph Meta Tags untuk Share Preview -->
+    <!-- Open Graph Meta Tags untuk Share Preview (Priority tinggi) -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://biolingnando.github.io/Biodata-saya/">
+    <meta property="og:url" content="https://biodatawinorohadimukti.vercel.app/">
     <meta property="og:title" content="WINORO HADI MUKTI - Game Developer & Content Creator">
-    <meta property="og:description" content="Selamat datang! Temukan game seru hasil karya saya dan unduh secara gratis. Game Developer & Content Creator.">
+    <meta property="og:description" content="Selamat datang! Temukan game seru hasil karya saya dan unduh secara gratis.">
     <meta property="og:image" content="https://i.ibb.co.com/rfGTkPS1/FB-IMG-1779332724114.jpg">
-    <meta property="og:image:width" content="400">
-    <meta property="og:image:height" content="400">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Foto Profil WINORO HADI MUKTI">
+    <meta property="og:site_name" content="WINORO HADI MUKTI">
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@winorohadimukti">
     <meta name="twitter:title" content="WINORO HADI MUKTI - Game Developer & Content Creator">
     <meta name="twitter:description" content="Selamat datang! Temukan game seru hasil karya saya dan unduh secara gratis.">
     <meta name="twitter:image" content="https://i.ibb.co.com/rfGTkPS1/FB-IMG-1779332724114.jpg">
     
     <!-- Additional SEO Meta Tags -->
     <meta name="description" content="Profil WINORO HADI MUKTI - Game Developer, Content Creator. Download game dan aplikasi premium gratis.">
-    <meta name="keywords" content="game developer, content creator, game download, aplikasi">
+    <meta name="keywords" content="game developer, content creator, game download, aplikasi, winoro">
     <meta name="author" content="WINORO HADI MUKTI">
     <meta name="theme-color" content="#1e293b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpg" href="https://i.ibb.co.com/rfGTkPS1/FB-IMG-1779332724114.jpg">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -176,9 +183,9 @@
     <!-- Tombol Ganti Tema & Menu atas -->
     <div class="w-full max-w-2xl px-4 pt-6 flex justify-between items-center z-10">
         <div class="text-xs font-bold uppercase tracking-widest bg-white/20 dark:bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-white shadow-sm">
-            🧑‍💻 Depeloper App / Game
+            🧑‍💻 Developer App / Game
         </div>
-        <button id="themeToggle" class="p-3 rounded-full bg-white/30 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 text-white dark:text-yellow-400 hover:scale-110 active:scale-95 transition-transform duration-200">
+        <button id="themeToggle" class="p-3 rounded-full bg-white/30 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 text-white dark:text-yellow-400 hover:scale-110 transition-transform duration-300 shadow-lg">
             <i class="fas fa-moon dark:hidden text-lg"></i>
             <i class="fas fa-sun hidden dark:block text-lg"></i>
         </button>
@@ -191,9 +198,9 @@
         <div class="flex flex-col items-center text-center fade-in w-full">
             <div class="relative group">
                 <!-- Efek pendaran cahaya di belakang foto profil -->
-                <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-300"></div>
+                <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-500"></div>
                 <!-- Foto Profil Anda -->
-                <img src="https://i.ibb.co.com/rfGTkPS1/FB-IMG-1779332724114.jpg" alt="Foto Profil" 
+                <img src="https://i.ibb.co.com/rfGTkPS1/FB-IMG-1779332724114.jpg" alt="Foto Profil WINORO HADI MUKTI" 
                      class="relative w-28 h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-white/95 dark:border-slate-800 shadow-2xl transition-transform duration-500 group-hover:scale-110">
             </div>
             
@@ -251,7 +258,7 @@
                         <i class="fas fa-search"></i>
                     </span>
                     <input type="text" id="searchInput" placeholder="Cari game atau aplikasi..." 
-                           class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/30 dark:bg-black/30 border border-white/20 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200">
+                           class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/30 dark:bg-black/30 border border-white/20 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all">
                 </div>
                 
                 <!-- Kontrol Layout & Counter -->
@@ -305,7 +312,7 @@
     </main>
 
     <!-- NOTIFIKASI TOAST PREMIUM -->
-    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-slate-900/90 dark:bg-white/95 text-white dark:text-slate-900 backdrop-blur-md border border-white/20 shadow-2xl">
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-slate-900/90 dark:bg-white/95 text-white dark:text-slate-900 backdrop-blur-md shadow-2xl">
         <div class="w-7 h-7 rounded-full bg-emerald-500/20 dark:bg-emerald-500/10 text-emerald-500 dark:text-emerald-600 flex items-center justify-center text-sm flex-shrink-0">
             <i class="fas fa-check"></i>
         </div>
@@ -638,11 +645,11 @@
                     <!-- Tombol Interaktif -->
                     <div class="button-group flex gap-2 w-full mt-2 sm:mt-0">
                         <button onclick="salinLink('${item.downloadLink}')" 
-                                class="flex-1 py-1.5 sm:py-2.5 px-2 bg-slate-900/10 dark:bg-white/10 hover:bg-slate-900/20 dark:hover:bg-white/15 text-slate-900 dark:text-white rounded-xl text-[10px] sm:text-xs font-semibold transition-all duration-200 active:scale-95 flex items-center justify-center gap-1">
+                                class="flex-1 py-1.5 sm:py-2.5 px-2 bg-slate-900/10 dark:bg-white/10 hover:bg-slate-900/20 dark:hover:bg-white/15 text-slate-900 dark:text-white rounded-xl text-[10px] sm:text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1">
                             <i class="fas fa-link text-xs"></i> <span>Salin Link</span>
                         </button>
                         <a href="${item.downloadLink}" target="_blank" 
-                           class="flex-1 py-1.5 sm:py-2.5 px-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-[10px] sm:text-xs font-semibold transition-all duration-200 active:scale-95 flex items-center justify-center gap-1">
+                           class="flex-1 py-1.5 sm:py-2.5 px-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-[10px] sm:text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1">
                             <i class="fas fa-cloud-download-alt text-xs"></i> <span>Download</span>
                         </a>
                     </div>
