@@ -443,6 +443,63 @@
                 transform: translateY(-2px);
             }
         }
+
+        /* Image Badge Styling & Animation */
+        .checkmark-badge-img {
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+            animation: badgeImageGlow 2s ease-in-out infinite;
+            position: relative;
+            z-index: 10;
+        }
+
+        .checkmark-badge-img img {
+            animation: badgeBounce 2.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+            transition: transform 0.3s ease;
+            display: block;
+        }
+
+        .checkmark-badge-img:hover img {
+            animation: badgeBounceActive 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        @keyframes badgeImageGlow {
+            0%, 100% {
+                filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 15px rgba(14, 165, 233, 0.4));
+            }
+            50% {
+                filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 25px rgba(14, 165, 233, 0.7));
+            }
+        }
+
+        @keyframes badgeBounce {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            25% {
+                transform: translateY(-6px) scale(1.02);
+            }
+            50% {
+                transform: translateY(0) scale(1);
+            }
+            75% {
+                transform: translateY(-3px) scale(1.01);
+            }
+        }
+
+        @keyframes badgeBounceActive {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Utility class for badge animation */
+        .animate-badge-bounce {
+            animation: badgeBounce 2.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+        }
     </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100 relative flex flex-col items-center pb-32 overflow-x-hidden" style="min-height: 100vh; position: relative; z-index: 1;">
@@ -603,8 +660,8 @@
                         WINORO HADI MUKTI
                     </span>
                 </div>
-                <div class="checkmark-badge w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center flex-shrink-0 relative z-10">
-                    <i class="fas fa-check text-white text-lg md:text-2xl font-bold drop-shadow-lg relative z-20"></i>
+                <div class="checkmark-badge-img w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center flex-shrink-0 relative z-10">
+                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/721-removebg-preview-XDmcDf68i742ozQ3N9uTWyvQk0S6Iq.png" alt="Verified Badge" class="w-full h-full object-contain drop-shadow-lg animate-badge-bounce">
                 </div>
             </div>
         </div>
