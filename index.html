@@ -221,15 +221,89 @@
             }
         }
 
+        /* Enhanced Checkmark Badge with Multiple Animations */
         .checkmark-badge {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%);
+            box-shadow: 
+                0 0 20px rgba(14, 165, 233, 0.6),
+                0 8px 24px rgba(16, 185, 129, 0.4),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            animation: badgePulse 2s ease-in-out infinite, badgeGlow 3s ease-in-out infinite;
+        }
+
+        .checkmark-badge::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.3) 0%, transparent 70%);
+            animation: badgeRing 2.5s ease-out infinite;
+        }
+
+        .checkmark-badge::after {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 2px solid rgba(14, 165, 233, 0.2);
+            animation: badgeRing2 3s ease-out infinite;
         }
 
         .checkmark-badge:hover {
-            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
-            transform: scale(1.05);
+            box-shadow: 
+                0 0 30px rgba(14, 165, 233, 0.8),
+                0 16px 40px rgba(16, 185, 129, 0.6),
+                inset 0 -2px 6px rgba(0, 0, 0, 0.3);
+            transform: scale(1.15) rotateZ(5deg);
+            animation: badgePulse 1s ease-in-out infinite, badgeGlow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% {
+                box-shadow: 
+                    0 0 20px rgba(14, 165, 233, 0.6),
+                    0 8px 24px rgba(16, 185, 129, 0.4),
+                    inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+            }
+            50% {
+                box-shadow: 
+                    0 0 30px rgba(14, 165, 233, 0.8),
+                    0 12px 32px rgba(16, 185, 129, 0.5),
+                    inset 0 -2px 6px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        @keyframes badgeGlow {
+            0%, 100% {
+                filter: brightness(1);
+            }
+            50% {
+                filter: brightness(1.2);
+            }
+        }
+
+        @keyframes badgeRing {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes badgeRing2 {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
         }
 
         /* Loading Skeleton Animation */
@@ -325,6 +399,49 @@
 
         .dark body::before {
             background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(51,65,85,0.2)" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,144C960,149,1056,139,1152,133.3C1248,128,1344,128,1392,128L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+        }
+
+        /* Custom Pulse Animation for Text */
+        @keyframes pulse-slow {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Footer Enhancement Animations */
+        .footer-container {
+            animation: footerSlideIn 0.6s ease-out;
+        }
+
+        @keyframes footerSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .footer-container:hover {
+            animation: footerFloating 3s ease-in-out infinite;
+        }
+
+        @keyframes footerFloating {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-2px);
+            }
         }
     </style>
 </head>
@@ -477,14 +594,17 @@
     <!-- FOOTER CREATOR (Di paling bawah tengah) -->
     <footer class="fixed bottom-0 left-0 right-0 w-full z-20">
         <div class="w-full flex justify-center pb-4">
-            <div class="footer-container glass-card px-6 py-3 rounded-t-3xl flex items-center justify-center gap-3 shadow-2xl border-t border-white/20">
+            <div class="footer-container glass-card px-6 py-4 rounded-t-3xl flex flex-col sm:flex-row items-center justify-center gap-4 shadow-2xl border-t border-white/20 group hover:border-blue-400/50 transition-all duration-300">
                 <div class="text-center">
-                    <p class="text-xs md:text-sm font-bold text-white tracking-wider drop-shadow-md">
-                        Made by <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 font-extrabold">WINORO HADI MUKTI</span>
+                    <p class="text-xs md:text-sm font-bold text-slate-300 tracking-widest drop-shadow-lg">
+                        Made by
                     </p>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-emerald-400 font-extrabold text-sm md:text-base tracking-wider drop-shadow-lg">
+                        WINORO HADI MUKTI
+                    </span>
                 </div>
-                <div class="checkmark-badge w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-check text-white text-lg md:text-xl font-bold"></i>
+                <div class="checkmark-badge w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center flex-shrink-0 relative z-10">
+                    <i class="fas fa-check text-white text-lg md:text-2xl font-bold drop-shadow-lg relative z-20"></i>
                 </div>
             </div>
         </div>
