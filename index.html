@@ -30,6 +30,9 @@
     <meta name="theme-color" content="#1e293b">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="msapplication-TileColor" content="#1e293b">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;WINORO&quot;,&quot;short_name&quot;:&quot;WINORO&quot;,&quot;start_url&quot;:&quot;/&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#1e293b&quot;,&quot;theme_color&quot;:&quot;#1e293b&quot;}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/jpg" href="https://i.ibb.co.com/rfGTkPS1/FB-IMG-1779332724114.jpg">
@@ -192,6 +195,54 @@
             box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
             transform: scale(1.05);
         }
+
+        /* Loading Skeleton Animation */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Smooth Scroll Behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Improved Focus States for Accessibility */
+        button:focus-visible,
+        input:focus-visible,
+        a:focus-visible {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+
+        /* Prevent Text Selection on Interactive Elements */
+        .interactive-element {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Improved Mobile Touch Target Size */
+        @media (max-width: 640px) {
+            button, a, input {
+                min-height: 44px;
+            }
+        }
+
+        /* Animation untuk Search Input */
+        .search-focus::placeholder {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .search-focus:focus::placeholder {
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100 min-h-screen relative flex flex-col items-center pb-32 overflow-x-hidden">
@@ -277,24 +328,28 @@
         <!-- FILTER & PENCARIAN -->
         <div class="w-full mb-6 fade-in" style="animation-delay: 0.2s;">
             <div class="glass-card p-3 rounded-2xl flex flex-col md:flex-row gap-3 items-center w-full">
-                <!-- Input Pencarian -->
+                    <!-- Input Pencarian -->
                 <div class="relative w-full flex-1">
                     <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 dark:text-slate-300 pointer-events-none">
                         <i class="fas fa-search"></i>
                     </span>
                     <input type="text" id="searchInput" placeholder="Cari game atau aplikasi..." 
-                           class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/30 dark:bg-black/30 border border-white/20 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                           aria-label="Cari game atau aplikasi"
+                           class="search-focus w-full pl-10 pr-10 py-2.5 rounded-xl bg-white/30 dark:bg-black/30 border border-white/20 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                    <button id="clearSearch" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-200 hidden transition-colors" aria-label="Hapus pencarian">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
                 
                 <!-- Kontrol Layout & Counter -->
                 <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
                     <!-- Switcher Layout (Kotak vs Memanjang) -->
-                    <div class="flex p-1 bg-black/40 backdrop-blur-md rounded-xl border border-white/10 text-white text-xs">
-                        <button id="viewGrid" class="px-3 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-1">
-                            <i class="fas fa-th-large"></i> Kotak (2x2)
+                    <div class="flex p-1 bg-black/40 backdrop-blur-md rounded-xl border border-white/10 text-white text-xs interactive-element" role="group" aria-label="Pilihan tampilan">
+                        <button id="viewGrid" class="px-3 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-1" aria-pressed="true" title="Tampil dalam bentuk grid 2 kolom">
+                            <i class="fas fa-th-large"></i> <span class="hidden sm:inline">Kotak</span>
                         </button>
-                        <button id="viewList" class="px-3 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-1">
-                            <i class="fas fa-list"></i> Memanjang
+                        <button id="viewList" class="px-3 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-1" aria-pressed="false" title="Tampil dalam bentuk daftar">
+                            <i class="fas fa-list"></i> <span class="hidden sm:inline">Memanjang</span>
                         </button>
                     </div>
 
@@ -354,7 +409,7 @@
 
     <!-- NOTIFIKASI TOAST PREMIUM -->
     <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-slate-900/90 dark:bg-white/95 text-white dark:text-slate-900 backdrop-blur-md shadow-2xl">
-        <div class="w-7 h-7 rounded-full bg-emerald-500/20 dark:bg-emerald-500/10 text-emerald-500 dark:text-emerald-600 flex items-center justify-center text-sm flex-shrink-0">
+        <div class="toast-icon w-7 h-7 rounded-full bg-emerald-500/20 dark:bg-emerald-500/10 text-emerald-500 dark:text-emerald-600 flex items-center justify-center text-sm flex-shrink-0">
             <i class="fas fa-check"></i>
         </div>
         <div class="flex-1 text-sm font-semibold tracking-wide text-left">
@@ -476,29 +531,43 @@
         // --- STATE MANAGEMENT ---
         let currentLayout = localStorage.getItem('layoutStyle') || 'grid';
         let searchQuery = '';
+        const DEBOUNCE_DELAY = 300; // ms
+        let searchTimeout;
 
-        // Logika Mode Gelap/Terang
+        // Logika Mode Gelap/Terang dengan Error Handling
         const themeToggleBtn = document.getElementById('themeToggle');
         const html = document.documentElement;
 
-        if (localStorage.getItem('theme') === 'light' || (!('theme' in localStorage) && !window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.remove('dark');
-            html.classList.add('light');
-        } else {
-            html.classList.add('dark');
+        function initTheme() {
+            try {
+                if (localStorage.getItem('theme') === 'light' || (!('theme' in localStorage) && !window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    html.classList.remove('dark');
+                    html.classList.add('light');
+                } else {
+                    html.classList.add('dark');
+                }
+            } catch (e) {
+                console.warn('[v0] Theme initialization warning:', e.message);
+            }
         }
 
-        themeToggleBtn.addEventListener('click', () => {
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                html.classList.add('light');
-                localStorage.setItem('theme', 'light');
-            } else {
-                html.classList.remove('light');
-                html.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
+        function toggleTheme() {
+            try {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    html.classList.add('light');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    html.classList.remove('light');
+                    html.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            } catch (e) {
+                console.warn('[v0] Theme toggle warning:', e.message);
             }
-        });
+        }
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
 
         // --- KATEGORISASI & ATURAN PENGURUTAN CUSTOM ---
         // Aturan: Karakter Spesial (-, _, . dll) -> Angka (0-9) -> Huruf (A-Z)
@@ -708,61 +777,149 @@
             if (currentLayout === 'grid') {
                 viewGridBtn.classList.add('bg-white/20', 'text-white');
                 viewGridBtn.classList.remove('text-slate-300');
+                viewGridBtn.setAttribute('aria-pressed', 'true');
                 viewListBtn.classList.remove('bg-white/20', 'text-white');
                 viewListBtn.classList.add('text-slate-300');
+                viewListBtn.setAttribute('aria-pressed', 'false');
             } else {
                 viewListBtn.classList.add('bg-white/20', 'text-white');
                 viewListBtn.classList.remove('text-slate-300');
+                viewListBtn.setAttribute('aria-pressed', 'true');
                 viewGridBtn.classList.remove('bg-white/20', 'text-white');
                 viewGridBtn.classList.add('text-slate-300');
+                viewGridBtn.setAttribute('aria-pressed', 'false');
             }
         }
 
         viewGridBtn.addEventListener('click', () => {
-            currentLayout = 'grid';
-            localStorage.setItem('layoutStyle', 'grid');
-            updateLayoutButtons();
-            renderItems();
+            try {
+                currentLayout = 'grid';
+                localStorage.setItem('layoutStyle', 'grid');
+                updateLayoutButtons();
+                renderItems();
+            } catch (e) {
+                console.warn('[v0] Layout change warning:', e.message);
+            }
         });
 
         viewListBtn.addEventListener('click', () => {
-            currentLayout = 'list';
-            localStorage.setItem('layoutStyle', 'list');
-            updateLayoutButtons();
-            renderItems();
-        });
-
-        // --- PENCARIAN CONTROLLER ---
-        const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('input', (e) => {
-            searchQuery = e.target.value;
-            renderItems();
-        });
-
-        // --- LOGIKA SALIN LINK & TOAST ---
-        function salinLink(link) {
-            const textArea = document.createElement("textarea");
-            textArea.value = link;
-            textArea.style.top = "0";
-            textArea.style.left = "0";
-            textArea.style.position = "fixed";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-
             try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    tampilkanToast();
-                }
-            } catch (err) {
-                console.error('Gagal menyalin link: ', err);
+                currentLayout = 'list';
+                localStorage.setItem('layoutStyle', 'list');
+                updateLayoutButtons();
+                renderItems();
+            } catch (e) {
+                console.warn('[v0] Layout change warning:', e.message);
             }
-            document.body.removeChild(textArea);
+        });
+
+        // --- PENCARIAN CONTROLLER dengan DEBOUNCE & CLEAR BUTTON ---
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+
+        function updateSearchUI() {
+            if (searchQuery.trim()) {
+                clearSearchBtn.classList.remove('hidden');
+            } else {
+                clearSearchBtn.classList.add('hidden');
+            }
         }
 
-        function tampilkanToast() {
+        function handleSearch(value) {
+            searchQuery = value.trim();
+            updateSearchUI();
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                renderItems();
+            }, DEBOUNCE_DELAY);
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            handleSearch(e.target.value);
+        });
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            handleSearch('');
+            searchInput.focus();
+        });
+
+        // Izinkan clear dengan Escape key
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && searchInput.value) {
+                searchInput.value = '';
+                handleSearch('');
+            }
+        });
+
+        // --- LOGIKA SALIN LINK & TOAST dengan IMPROVED ERROR HANDLING ---
+        function salinLink(link) {
+            if (!link || typeof link !== 'string') {
+                console.error('[v0] Invalid link provided:', link);
+                tampilkanToast('Gagal menyalin link', 'error');
+                return;
+            }
+
+            // Gunakan modern Clipboard API jika tersedia
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(link)
+                    .then(() => {
+                        tampilkanToast('Link berhasil disalin!', 'success');
+                    })
+                    .catch(err => {
+                        console.error('[v0] Clipboard API error:', err);
+                        // Fallback ke metode lama
+                        salinLinkFallback(link);
+                    });
+            } else {
+                // Fallback untuk browser lama
+                salinLinkFallback(link);
+            }
+        }
+
+        function salinLinkFallback(link) {
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = link;
+                textArea.style.top = "0";
+                textArea.style.left = "0";
+                textArea.style.position = "fixed";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    tampilkanToast('Link berhasil disalin!', 'success');
+                } else {
+                    tampilkanToast('Gagal menyalin link', 'error');
+                }
+                document.body.removeChild(textArea);
+            } catch (err) {
+                console.error('[v0] Fallback copy error:', err);
+                tampilkanToast('Gagal menyalin link', 'error');
+                document.body.removeChild(textArea);
+            }
+        }
+
+        function tampilkanToast(message = 'Link berhasil disalin!', type = 'success') {
             const toast = document.getElementById("toast");
+            if (!toast) {
+                console.warn('[v0] Toast element not found');
+                return;
+            }
+
+            // Update pesan toast
+            const messageEl = toast.querySelector('.flex-1') || toast;
+            if (messageEl) {
+                messageEl.textContent = message;
+            }
+
+            // Ubah styling berdasarkan tipe
+            if (type === 'error') {
+                toast.querySelector('[class*="emerald"]')?.classList.add('hidden');
+            }
+
             toast.classList.add("show");
             
             setTimeout(function(){ 
@@ -770,9 +927,24 @@
             }, 2500);
         }
 
-        // Mulai Render Pertama kali
-        updateLayoutButtons();
-        renderItems();
+        // --- INITIALIZE APPLICATION ---
+        function initializeApp() {
+            try {
+                initTheme();
+                updateLayoutButtons();
+                renderItems();
+                console.log('[v0] Application initialized successfully');
+            } catch (e) {
+                console.error('[v0] Initialization error:', e.message);
+            }
+        }
+
+        // Tunggu DOM sepenuhnya dimuat
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
     </script>
 </body>
 </html>
