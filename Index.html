@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil & Unduhan Game Premium</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    screens: {
+                        'xs': '400px',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Glassmorphism Base Styles */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Micro-interactions & animations */
+        .fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modern Custom Toast */
+        #toast {
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translate(-50%, 20px);
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        /* ========================================================
+           SISTEM DUAL-TAMPILAN (CSS NESTED LAYOUT SWITCHING)
+           Mengatur transisi Kotak vs Memanjang secara instan & rapi
+           ======================================================== */
+
+        /* 1. TAMPILAN KOTAK (GRID 2-KOLOM / 2 BANDING 2) */
+        .view-grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+        .view-grid .game-card {
+            flex-direction: column !important;
+            text-align: center !important;
+            border-radius: 10px 0px 10px 0px !important;
+            align-items: center !important;
+        }
+        .view-grid .img-wrapper {
+            width: 100% !important;
+            display: flex !important;
+            justify-content: center !important;
+        }
+        .view-grid .info-wrapper {
+            text-align: center !important;
+            width: 100% !important;
+        }
+        .view-grid .rating-wrapper {
+            justify-content: center !important;
+        }
+        .view-grid .button-group {
+            flex-direction: column !important;
+        }
+        @media (min-width: 480px) {
+            .view-grid .button-group {
+                flex-direction: row !important;
+            }
+        }
+
+        /* 2. TAMPILAN MEMANJANG (SINGLE-COLUMN ROW) */
+        .view-list {
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .view-list .game-card {
+            flex-direction: row !important;
+            align-items: center !important;
+            text-align: left !important;
+            border-radius: 16px !important;
+            width: 100% !important;
+        }
+        .view-list .img-wrapper {
+            width: auto !important;
+            display: block !important;
+        }
+        .view-list .info-wrapper {
+            text-align: left !important;
+            width: auto !important;
+        }
+        .view-list .rating-wrapper {
+            justify-content: flex-start !important;
+        }
+        .view-list .button-group {
+            flex-direction: row !important;
+        }
+    </style>
+</head>
+<body class="text-slate-900 dark:text-slate-100 min-h-screen relative flex flex-col items-center pb-24 overflow-x-hidden">
+
+    <!-- LATAR BELAKANG GAMBAR (Sangat Jelas, Tidak Terlalu Terang/Gelap) -->
+    <div class="fixed inset-0 z-[-2] overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105" 
+             style="background-image: url('https://i.ibb.co.com/JR0tFcCb/FB-IMG-1779107380605.jpg');">
+        </div>
+        <!-- Lapisan tipis transparan (Overlay) agar kontras teks tetap aman namun gambar tetap sangat jelas -->
+        <div class="absolute inset-0 bg-slate-900/15 dark:bg-slate-950/45 transition-colors duration-300"></div>
+    </div>
+
+    <!-- Tombol Ganti Tema & Menu atas -->
+    <div class="w-full max-w-2xl px-4 pt-6 flex justify-between items-center z-10">
+        <div class="text-xs font-bold uppercase tracking-widest bg-white/20 dark:bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-white shadow-sm">
+            🛸 Portofolio
+        </div>
+        <button id="themeToggle" class="p-3 rounded-full bg-white/30 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 text-white dark:text-yellow-400 hover:scale-110 active:scale-95 transition-all shadow-lg hover:shadow-yellow-500/10">
+            <i class="fas fa-moon dark:hidden text-lg"></i>
+            <i class="fas fa-sun hidden dark:block text-lg"></i>
+        </button>
+    </div>
+
+    <!-- MAIN WRAPPER (GAYA LINKTREE PREMIUM) -->
+    <main class="w-full max-w-2xl px-4 mt-8 flex flex-col items-center z-10">
+        
+        <!-- FOTO PROFIL, NAMA & DESKRIPSI -->
+        <div class="flex flex-col items-center text-center fade-in w-full">
+            <div class="relative group">
+                <!-- Efek pendaran cahaya di belakang foto profil -->
+                <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
+                <!-- Foto Profil Anda -->
+                <img src="https://placehold.co/400x400/1e293b/ffffff?text=FOTO+PROFIL" alt="Foto Profil" 
+                     class="relative w-28 h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-white/95 dark:border-slate-800 shadow-2xl transition-transform duration-500 group-hover:scale-105">
+            </div>
+            
+            <!-- Nama Anda -->
+            <h1 class="text-3xl font-extrabold mt-6 text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] tracking-tight">
+                Nama Anda
+            </h1>
+            
+            <!-- Deskripsi Singkat modern dengan tag khusus -->
+            <div class="mt-3 px-4 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/10 inline-block">
+                <p class="text-xs md:text-sm text-slate-200 font-medium tracking-wide">
+                    🎮 Game Developer & Content Creator
+                </p>
+            </div>
+            <p class="text-sm text-slate-100 max-w-sm mt-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] font-light">
+                Selamat datang! Temukan game seru hasil karya saya dan unduh secara gratis di bawah ini.
+            </p>
+        </div>
+
+        <!-- SOSIAL MEDIA (Desain Modern Glow) -->
+        <div class="flex justify-center gap-4 mt-8 mb-10 fade-in w-full" style="animation-delay: 0.15s;">
+            <!-- Facebook -->
+            <a href="LINK_FACEBOOK_ANDA" target="_blank" aria-label="Facebook"
+               class="w-12 h-12 flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-500 text-white shadow-[0_4px_14px_rgba(37,99,235,0.4)] hover:shadow-[0_6px_20px_rgba(37,99,235,0.6)] hover:scale-110 active:scale-95 transition-all duration-300">
+                <i class="fab fa-facebook-f text-lg"></i>
+            </a>
+            <!-- Instagram -->
+            <a href="LINK_INSTAGRAM_ANDA" target="_blank" aria-label="Instagram"
+               class="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-600 text-white shadow-[0_4px_14px_rgba(219,39,119,0.4)] hover:shadow-[0_6px_20px_rgba(219,39,119,0.6)] hover:scale-110 active:scale-95 transition-all duration-300">
+                <i class="fab fa-instagram text-lg"></i>
+            </a>
+            <!-- WhatsApp -->
+            <a href="LINK_WHATSAPP_ANDA" target="_blank" aria-label="WhatsApp"
+               class="w-12 h-12 flex items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-400 text-white shadow-[0_4px_14px_rgba(16,185,129,0.4)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.6)] hover:scale-110 active:scale-95 transition-all duration-300">
+                <i class="fab fa-whatsapp text-xl"></i>
+            </a>
+            <!-- TikTok -->
+            <a href="LINK_TIKTOK_ANDA" target="_blank" aria-label="TikTok"
+               class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-950 hover:bg-slate-900 border border-slate-800 text-white shadow-[0_4px_14px_rgba(0,0,0,0.4)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.6)] hover:scale-110 active:scale-95 transition-all duration-300">
+                <i class="fab fa-tiktok text-lg"></i>
+            </a>
+            <!-- YouTube -->
+            <a href="LINK_YOUTUBE_ANDA" target="_blank" aria-label="YouTube"
+               class="w-12 h-12 flex items-center justify-center rounded-full bg-red-600 hover:bg-red-500 text-white shadow-[0_4px_14px_rgba(220,38,38,0.4)] hover:shadow-[0_6px_20px_rgba(220,38,38,0.6)] hover:scale-110 active:scale-95 transition-all duration-300">
+                <i class="fab fa-youtube text-lg"></i>
+            </a>
+        </div>
+
+        <!-- FILTER & PENCARIAN -->
+        <div class="w-full mb-6 fade-in" style="animation-delay: 0.2s;">
+            <div class="glass-card p-3 rounded-2xl flex flex-col md:flex-row gap-3 items-center w-full">
+                <!-- Input Pencarian -->
+                <div class="relative w-full flex-1">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 dark:text-slate-300 pointer-events-none">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Cari game atau aplikasi..." 
+                           class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/30 dark:bg-black/30 border border-white/20 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm transition-all duration-300">
+                </div>
+                
+                <!-- Kontrol Layout & Counter -->
+                <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+                    <!-- Switcher Layout (Kotak vs Memanjang) -->
+                    <div class="flex p-1 bg-black/40 backdrop-blur-md rounded-xl border border-white/10 text-white text-xs">
+                        <button id="viewGrid" class="px-3 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-1">
+                            <i class="fas fa-th-large"></i> Kotak (2x2)
+                        </button>
+                        <button id="viewList" class="px-3 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-1">
+                            <i class="fas fa-list"></i> Memanjang
+                        </button>
+                    </div>
+
+                    <!-- Counter Otomatis -->
+                    <span id="gameCounter" class="text-xs bg-white/20 dark:bg-white/10 backdrop-blur-md px-3 py-2.5 rounded-xl text-white border border-white/10 font-bold whitespace-nowrap">
+                        0 Tersedia
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DAFTAR UTAMA YANG AKAN DI-RENDER OLEH JAVASCRIPT -->
+        <div class="w-full space-y-12">
+            
+            <!-- GRUP 1: GAME (DI ATAS) -->
+            <div id="gamesSection" class="space-y-6">
+                <div class="border-b border-white/20 pb-2 mb-4 flex items-center justify-between">
+                    <h2 class="text-xl font-extrabold text-white drop-shadow-md flex items-center gap-2 tracking-wide">
+                        <i class="fas fa-gamepad text-yellow-400 animate-pulse"></i> DAFTAR GAME
+                    </h2>
+                    <span id="gameSubCounter" class="text-xs text-slate-200 bg-black/30 px-2 py-1 rounded-md font-semibold">0 Game</span>
+                </div>
+                <!-- Tempat meletakkan grup alfabet Game -->
+                <div id="gamesContainer" class="space-y-8"></div>
+            </div>
+
+            <!-- GRUP 2: APLIKASI (DI BAWAH) -->
+            <div id="appsSection" class="space-y-6">
+                <div class="border-b border-white/20 pb-2 mb-4 flex items-center justify-between">
+                    <h2 class="text-xl font-extrabold text-white drop-shadow-md flex items-center gap-2 tracking-wide">
+                        <i class="fas fa-mobile-alt text-emerald-400"></i> DAFTAR APLIKASI
+                    </h2>
+                    <span id="appSubCounter" class="text-xs text-slate-200 bg-black/30 px-2 py-1 rounded-md font-semibold">0 Aplikasi</span>
+                </div>
+                <!-- Tempat meletakkan grup alfabet Aplikasi -->
+                <div id="appsContainer" class="space-y-8"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- NOTIFIKASI TOAST PREMIUM -->
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-slate-900/90 dark:bg-white/95 text-white dark:text-slate-900 backdrop-blur-md shadow-2xl border border-white/10 dark:border-slate-200/20 min-w-[280px]">
+        <div class="w-7 h-7 rounded-full bg-emerald-500/20 dark:bg-emerald-500/10 text-emerald-500 dark:text-emerald-600 flex items-center justify-center text-sm flex-shrink-0">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="flex-1 text-sm font-semibold tracking-wide text-left">
+            Link berhasil disalin!
+        </div>
+    </div>
+
+    <script>
+        // ========================================================
+        // DATABASE INTERNAL (Silakan edit / tambah item sesuka hati)
+        // Kunci 'type': "game" untuk ditaruh di atas, "app" di bawah.
+        // Sistem otomatis mengurutkan & mengelompokkan secara ajaib!
+        // ========================================================
+        const ITEMS_DATA = [
+            // --- DAFTAR GAME (type: "game") ---
+            {
+                name: "Cyber Space Ranger",
+                type: "game",
+                category: "Action-RPG",
+                rating: 4.5,
+                badge: "Hot",
+                badgeColor: "from-yellow-400 to-amber-500",
+                desc: "Game petualangan luar angkasa dengan grafis memukau, kustomisasi karakter super keren, dan misi yang seru untuk diselesaikan.",
+                downloadLink: "https://link-download-game-1.com",
+                image: "https://placehold.co/200x200/2563eb/ffffff?text=GAME+1"
+            },
+            {
+                name: "Retro Pixel Runner",
+                type: "game",
+                category: "Arcade / Retro",
+                rating: 4.0,
+                badge: "Update",
+                badgeColor: "from-emerald-400 to-green-500",
+                desc: "Nikmati keseruan lari tanpa batas dengan grafis pixel klasik 8-bit. Ringan dimainkan di semua jenis HP tanpa nge-lag!",
+                downloadLink: "https://link-download-game-2.com",
+                image: "https://placehold.co/200x200/10b981/ffffff?text=GAME+2"
+            },
+            {
+                name: "Alpha Strike Gunner",
+                type: "game",
+                category: "Shooter",
+                rating: 4.8,
+                badge: "Popular",
+                badgeColor: "from-blue-500 to-indigo-500",
+                desc: "Pertahankan markas utama dari serangan alien futuristik yang menantang.",
+                downloadLink: "https://link-download-game-3.com",
+                image: "https://placehold.co/200x200/ef4444/ffffff?text=GAME+3"
+            },
+            {
+                name: "- Line Defense Ops -",
+                type: "game",
+                category: "Strategy",
+                rating: 4.2,
+                badge: "New",
+                badgeColor: "from-purple-500 to-pink-500",
+                desc: "Simbol/karakter garis paling atas! Atur formasi menara pertahanan Anda dengan taktik brilian.",
+                downloadLink: "https://link-download-game-special.com",
+                image: "https://placehold.co/200x200/a855f7/ffffff?text=-+LINE+-"
+            },
+            {
+                name: "99 Battlegrounds Reload",
+                type: "game",
+                category: "Action",
+                rating: 4.6,
+                badge: "Top",
+                badgeColor: "from-amber-500 to-red-500",
+                desc: "Angka didahulukan di atas huruf! Bertahan hidup bersama 99 pemain lainnya di pulau terpencil.",
+                downloadLink: "https://link-download-game-99.com",
+                image: "https://placehold.co/200x200/f59e0b/ffffff?text=99+BG"
+            },
+
+            // --- DAFTAR APLIKASI (type: "app") ---
+            {
+                name: "Pro Editor Video HD",
+                type: "app",
+                category: "Video Editor",
+                rating: 4.7,
+                badge: "Pro",
+                badgeColor: "from-red-500 to-rose-600",
+                desc: "Edit video kualitas tinggi langsung dari HP Anda. Lengkap dengan transisi cinematic terpopuler.",
+                downloadLink: "https://link-download-app-1.com",
+                image: "https://placehold.co/200x200/db2777/ffffff?text=APP+1"
+            },
+            {
+                name: "Clean Speed Booster",
+                type: "app",
+                category: "Utility",
+                rating: 4.1,
+                badge: "Lite",
+                badgeColor: "from-teal-400 to-cyan-500",
+                desc: "Bersihkan berkas sampah yang menyumbat penyimpanan HP Anda. Membuat ponsel Anda terasa seperti baru kembali.",
+                downloadLink: "https://link-download-app-2.com",
+                image: "https://placehold.co/200x200/06b6d4/ffffff?text=APP+2"
+            },
+            {
+                name: "_Z-File Manager Pro_",
+                type: "app",
+                category: "Productivity",
+                rating: 4.9,
+                badge: "Must Have",
+                badgeColor: "from-indigo-500 to-violet-600",
+                desc: "Karakter garis bawah paling atas! Atur berkas internal dengan enkripsi tingkat militer.",
+                downloadLink: "https://link-download-app-special.com",
+                image: "https://placehold.co/200x200/6366f1/ffffff?text=_+FILE+_"
+            },
+            {
+                name: "100x Fast Web Downloader",
+                type: "app",
+                category: "Tools",
+                rating: 4.4,
+                badge: "Super Fast",
+                badgeColor: "from-green-500 to-emerald-600",
+                desc: "Nomor prioritas teratas aplikasi! Unduh berkas media ukuran besar dari browser dengan teknologi pemecah thread.",
+                downloadLink: "https://link-download-app-100.com",
+                image: "https://placehold.co/200x200/10b981/ffffff?text=100x"
+            }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let currentLayout = localStorage.getItem('layoutStyle') || 'grid';
+        let searchQuery = '';
+
+        // Logika Mode Gelap/Terang
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        if (localStorage.getItem('theme') === 'light' || (!('theme' in localStorage) && !window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.remove('dark');
+            html.classList.add('light');
+        } else {
+            html.classList.add('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // --- KATEGORISASI & ATURAN PENGURUTAN CUSTOM ---
+        // Aturan: Karakter Spesial (-, _, . dll) -> Angka (0-9) -> Huruf (A-Z)
+        function getCharCategory(char) {
+            if (!char) return 4;
+            if (/[a-zA-Z]/.test(char)) return 3; // Huruf Alfabet biasa
+            if (/[0-9]/.test(char)) return 2;    // Angka
+            return 1;                            // Karakter spesial (simbol, garis, dll)
+        }
+
+        function compareItems(a, b) {
+            const nameA = a.name.trim();
+            const nameB = b.name.trim();
+            const charA = nameA.charAt(0);
+            const charB = nameB.charAt(0);
+            
+            const catA = getCharCategory(charA);
+            const catB = getCharCategory(charB);
+            
+            if (catA !== catB) {
+                return catA - catB; // Urutkan Kategori 1 (Spesial) dulu, lalu 2 (Angka), baru 3 (Huruf)
+            }
+            
+            // Jika kategori sama, urutkan berdasarkan alfabet/standar lokal (A-Z)
+            return nameA.localeCompare(nameB, 'id', { sensitivity: 'base' });
+        }
+
+        // Tentukan grup kunci untuk setiap item (Grup A, B, atau Grup # untuk simbol/angka)
+        function getGroupKey(name) {
+            const firstChar = name.trim().charAt(0).toUpperCase();
+            if (/[A-Z]/.test(firstChar)) {
+                return firstChar;
+            }
+            return '#'; // Kategori simbol, garis, angka, karakter khusus dikelompokkan dalam '#'
+        }
+
+        // --- PROSES DAN RENDER DATA ---
+        function renderItems() {
+            // Filter data berdasarkan input pencarian
+            const filtered = ITEMS_DATA.filter(item => {
+                const keyword = searchQuery.toLowerCase();
+                return item.name.toLowerCase().includes(keyword) || 
+                       item.category.toLowerCase().includes(keyword) ||
+                       item.desc.toLowerCase().includes(keyword);
+            });
+
+            // Pisahkan menjadi tipe 'game' dan 'app'
+            const filteredGames = filtered.filter(item => item.type === 'game');
+            const filteredApps = filtered.filter(item => item.type === 'app');
+
+            // Urutkan masing-masing kategori sesuai kriteria custom
+            filteredGames.sort(compareItems);
+            filteredApps.sort(compareItems);
+
+            // Perbarui indikator jumlah dinamis
+            document.getElementById('gameCounter').innerText = `${filtered.length} Tersedia`;
+            document.getElementById('gameSubCounter').innerText = `${filteredGames.length} Game`;
+            document.getElementById('appSubCounter').innerText = `${filteredApps.length} Aplikasi`;
+
+            // Proses rendering ke dalam kontainer HTML
+            renderCategoryGroup(filteredGames, 'gamesContainer');
+            renderCategoryGroup(filteredApps, 'appsContainer');
+        }
+
+        function renderCategoryGroup(items, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-card p-6 text-center text-sm text-slate-300 rounded-2xl">
+                        🔍 Tidak ada data yang cocok dengan pencarian Anda.
+                    </div>
+                `;
+                return;
+            }
+
+            // Kelompokkan item berdasarkan huruf depannya
+            const groups = {};
+            items.forEach(item => {
+                const key = getGroupKey(item.name);
+                if (!groups[key]) {
+                    groups[key] = [];
+                }
+                groups[key].push(item);
+            });
+
+            // Urutan grup: Pastikan grup '#' (angka & simbol) berada paling atas
+            const sortedGroupKeys = Object.keys(groups).sort((a, b) => {
+                if (a === '#') return -1;
+                if (b === '#') return 1;
+                return a.localeCompare(b);
+            });
+
+            // Loop untuk merender setiap grup alfabet
+            sortedGroupKeys.forEach(groupKey => {
+                const groupContainer = document.createElement('div');
+                groupContainer.className = "space-y-3";
+
+                // Header Grup Alfabetis
+                const header = document.createElement('div');
+                header.className = "flex items-center gap-2 px-1 text-sm font-extrabold tracking-wider text-white drop-shadow-md";
+                header.innerHTML = `
+                    <span class="bg-blue-600/60 text-white rounded-lg w-7 h-7 flex items-center justify-center border border-white/20 text-xs shadow-md">
+                        ${groupKey}
+                    </span>
+                    <span class="opacity-80">Grup ${groupKey}</span>
+                `;
+                groupContainer.appendChild(header);
+
+                // Kontainer kartu di dalam grup alfabet (Bisa bertipe view-grid / view-list)
+                const cardGrid = document.createElement('div');
+                cardGrid.className = currentLayout === 'grid' ? 'view-grid gap-4' : 'view-list gap-4';
+
+                groups[groupKey].forEach(item => {
+                    const card = createCardElement(item);
+                    cardGrid.appendChild(card);
+                });
+
+                groupContainer.appendChild(cardGrid);
+                container.appendChild(groupContainer);
+            });
+        }
+
+        // Template Generator Kartu
+        function createCardElement(item) {
+            const card = document.createElement('div');
+            
+            // Kelas asimetris 'rounded-[10px_0px_10px_0px]' hanya jika layout saat ini adalah 'grid'
+            const cornerClass = currentLayout === 'grid' ? 'rounded-[10px_0px_10px_0px]' : 'rounded-2xl';
+
+            card.className = `game-card glass-card p-4 sm:p-5 shadow-2xl flex hover:scale-[1.02] hover:bg-white/55 dark:hover:bg-slate-900/65 transition-all duration-300 ${cornerClass} gap-4 w-full`;
+
+            // Struktur Bintang Rating
+            const fullStars = Math.floor(item.rating);
+            const hasHalf = item.rating % 1 !== 0;
+            let starsHtml = '';
+            for (let i = 0; i < fullStars; i++) {
+                starsHtml += '<i class="fas fa-star text-amber-400 dark:text-yellow-400"></i>';
+            }
+            if (hasHalf) {
+                starsHtml += '<i class="fas fa-star-half-alt text-amber-400 dark:text-yellow-400"></i>';
+            }
+            const emptyStars = 5 - Math.ceil(item.rating);
+            for (let i = 0; i < emptyStars; i++) {
+                starsHtml += '<i class="far fa-star text-amber-400 dark:text-yellow-400"></i>';
+            }
+
+            // Lencana Badge jika ada
+            let badgeHtml = '';
+            if (item.badge) {
+                badgeHtml = `
+                    <span class="absolute -top-2 right-0 bg-gradient-to-r ${item.badgeColor} text-[9px] sm:text-[10px] text-white font-extrabold px-1.5 sm:px-2 py-0.5 rounded-full uppercase shadow-md">
+                        ${item.badge}
+                    </span>
+                `;
+            }
+
+            card.innerHTML = `
+                <!-- Icon Game/App -->
+                <div class="img-wrapper relative flex-shrink-0">
+                    <img src="${item.image}" alt="Icon ${item.name}" 
+                         class="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl shadow-xl object-cover border border-white/40">
+                    ${badgeHtml}
+                </div>
+                
+                <!-- Info Lengkap -->
+                <div class="info-wrapper flex-1 flex flex-col justify-between h-full w-full">
+                    <div>
+                        <h3 class="text-sm sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white mb-0.5 sm:mb-1 leading-tight">
+                            ${item.name}
+                        </h3>
+                        
+                        <!-- Rating Bintang -->
+                        <div class="rating-wrapper flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs mb-2">
+                            <span>${starsHtml}</span>
+                            <span class="text-slate-700 dark:text-slate-300 font-medium">| ${item.category}</span>
+                        </div>
+                        
+                        <p class="text-[11px] sm:text-xs text-slate-700 dark:text-slate-300 line-clamp-2 mb-2 sm:mb-3 leading-relaxed">
+                            ${item.desc}
+                        </p>
+                    </div>
+                    
+                    <!-- Tombol Interaktif -->
+                    <div class="button-group flex gap-2 w-full mt-2 sm:mt-0">
+                        <button onclick="salinLink('${item.downloadLink}')" 
+                                class="flex-1 py-1.5 sm:py-2.5 px-2 bg-slate-900/10 dark:bg-white/10 hover:bg-slate-900/20 dark:hover:bg-white/15 text-slate-900 dark:text-white rounded-xl text-[10px] sm:text-xs font-semibold border border-slate-900/20 dark:border-white/20 transition-all duration-200 flex items-center justify-center gap-1">
+                            <i class="fas fa-link text-xs"></i> <span>Salin Link</span>
+                        </button>
+                        <a href="${item.downloadLink}" target="_blank" 
+                           class="flex-1 py-1.5 sm:py-2.5 px-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-[10px] sm:text-xs font-semibold shadow-[0_4px_12px_rgba(37,99,235,0.3)] hover:shadow-[0_6px_18px_rgba(37,99,235,0.5)] transition-all duration-200 flex items-center justify-center gap-1">
+                            <i class="fas fa-cloud-download-alt text-xs"></i> <span>Download</span>
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // --- LAYOUT SWITCHER CONTROLLER ---
+        const viewGridBtn = document.getElementById('viewGrid');
+        const viewListBtn = document.getElementById('viewList');
+
+        function updateLayoutButtons() {
+            if (currentLayout === 'grid') {
+                viewGridBtn.classList.add('bg-white/20', 'text-white');
+                viewGridBtn.classList.remove('text-slate-300');
+                viewListBtn.classList.remove('bg-white/20', 'text-white');
+                viewListBtn.classList.add('text-slate-300');
+            } else {
+                viewListBtn.classList.add('bg-white/20', 'text-white');
+                viewListBtn.classList.remove('text-slate-300');
+                viewGridBtn.classList.remove('bg-white/20', 'text-white');
+                viewGridBtn.classList.add('text-slate-300');
+            }
+        }
+
+        viewGridBtn.addEventListener('click', () => {
+            currentLayout = 'grid';
+            localStorage.setItem('layoutStyle', 'grid');
+            updateLayoutButtons();
+            renderItems();
+        });
+
+        viewListBtn.addEventListener('click', () => {
+            currentLayout = 'list';
+            localStorage.setItem('layoutStyle', 'list');
+            updateLayoutButtons();
+            renderItems();
+        });
+
+        // --- PENCARIAN CONTROLLER ---
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderItems();
+        });
+
+        // --- LOGIKA SALIN LINK & TOAST ---
+        function salinLink(link) {
+            const textArea = document.createElement("textarea");
+            textArea.value = link;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    tampilkanToast();
+                }
+            } catch (err) {
+                console.error('Gagal menyalin link: ', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function tampilkanToast() {
+            const toast = document.getElementById("toast");
+            toast.classList.add("show");
+            
+            setTimeout(function(){ 
+                toast.classList.remove("show"); 
+            }, 2500);
+        }
+
+        // Mulai Render Pertama kali
+        updateLayoutButtons();
+        renderItems();
+    </script>
+</body>
+</html>
