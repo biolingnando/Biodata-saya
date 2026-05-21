@@ -500,6 +500,82 @@
         .animate-badge-bounce {
             animation: badgeBounce 2.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
         }
+
+        /* Content Protection - Prevent Copying, Downloading, and Screenshots */
+        body {
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-user-drag: none;
+        }
+
+        /* Allow text selection only for specific elements */
+        .selectable, input, textarea {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        /* Protect images from being downloaded */
+        img {
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            pointer-events: none;
+        }
+
+        /* Allow interaction with buttons and links */
+        button, a, input, textarea {
+            pointer-events: auto;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        /* Disable right-click context menu */
+        * {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Prevent screenshot overlay */
+        @media (print) {
+            body {
+                visibility: hidden;
+            }
+        }
+
+        /* Disable drag and drop */
+        img {
+            pointer-events: none;
+            -webkit-user-drag: none;
+        }
+
+        /* Light Mode - Better Text Visibility */
+        :not(.dark) {
+            --text-primary: #000000;
+            --text-secondary: #1a1a1a;
+            --bg-dark: #ffffff;
+        }
+
+        .light h1, .light h2, .light h3, .light p, .light span {
+            color: #000000 !important;
+            font-weight: 600;
+        }
+
+        /* Improved Dark Mode */
+        .dark {
+            --text-primary: #ffffff;
+            --text-secondary: #e5e7eb;
+        }
+
+        .dark h1, .dark h2, .dark h3 {
+            color: #ffffff !important;
+            font-weight: 700;
+        }
+
+        .dark p, .dark span {
+            color: #ffffff !important;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body class="text-slate-900 dark:text-slate-100 relative flex flex-col items-center pb-32 overflow-x-hidden" style="min-height: 100vh; position: relative; z-index: 1;">
@@ -545,23 +621,25 @@
             <div class="relative group">
                 <!-- Efek pendaran cahaya di belakang foto profil -->
                 <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-300"></div>
-                <!-- Foto Profil Anda -->
+                <!-- Foto Profil Anda - Protected Content -->
                 <img src="https://i.ibb.co.com/rfGTkPS1/FB-IMG-1779332724114.jpg" alt="Foto Profil WINORO HADI MUKTI" 
-                     class="relative w-28 h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-white/95 dark:border-slate-800 shadow-2xl transition-transform duration-500 group-hover:scale-110">
+                     class="relative w-36 h-36 md:w-44 md:h-44 rounded-full object-cover border-4 border-white/95 dark:border-slate-800 shadow-2xl transition-transform duration-500 group-hover:scale-110 select-none pointer-events-none"
+                     draggable="false"
+                     oncontextmenu="return false;">
             </div>
             
             <!-- Nama Anda -->
-            <h1 class="text-3xl font-extrabold mt-6 text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] tracking-tight">
+            <h1 class="text-3xl md:text-4xl font-black mt-6 text-white dark:text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] dark:drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] tracking-tight">
                 WINORO HADI MUKTI
             </h1>
             
             <!-- Deskripsi Singkat modern dengan tag khusus -->
-            <div class="mt-3 px-4 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/10 inline-block">
-                <p class="text-xs md:text-sm text-slate-200 font-medium tracking-wide">
+            <div class="mt-3 px-4 py-1.5 bg-black/50 dark:bg-black/60 backdrop-blur-md rounded-full border border-white/20 dark:border-white/15 inline-block">
+                <p class="text-xs md:text-sm text-white dark:text-white font-bold tracking-wide">
                     🎮 Game Developer & Content Creator
                 </p>
             </div>
-            <p class="text-sm text-slate-100 max-w-sm mt-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] font-light">
+            <p class="text-sm text-white dark:text-white max-w-sm mt-3 drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] dark:drop-shadow-[0_3px_8px_rgba(0,0,0,1)] font-semibold">
                 Selamat datang! Temukan game seru hasil karya saya dan unduh secara gratis di bawah ini.
             </p>
         </div>
@@ -861,6 +939,159 @@
         }
 
         mapsButton.addEventListener('click', openGoogleMaps);
+
+        // --- CONTENT PROTECTION SYSTEM ---
+        function initContentProtection() {
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', (e) => {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    showProtectionWarning('Hak Cipta Dilindungi', 'Konten ini dilindungi dan tidak boleh disalin tanpa izin.');
+                    return false;
+                }
+            });
+
+            // Disable text selection on protected elements
+            document.addEventListener('selectstart', (e) => {
+                if (!e.target.matches('input, textarea, .selectable')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // Disable copy event
+            document.addEventListener('copy', (e) => {
+                if (!e.target.matches('input, textarea, .selectable')) {
+                    e.preventDefault();
+                    showProtectionWarning('Penyalinan Dilarang', 'Konten ini dilindungi. Penyalinan teks dan gambar tidak diperbolehkan karena dianggap ilegal.');
+                    return false;
+                }
+            });
+
+            // Disable cut event
+            document.addEventListener('cut', (e) => {
+                if (!e.target.matches('input, textarea')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // Disable image drag
+            document.addEventListener('dragstart', (e) => {
+                if (e.target.tagName === 'IMG') {
+                    e.preventDefault();
+                    showProtectionWarning('Download Dilarang', 'Gambar dan konten tidak dapat diunduh.');
+                    return false;
+                }
+            });
+
+            // Prevent keyboard shortcuts for saving/printing
+            document.addEventListener('keydown', (e) => {
+                // Ctrl+S or Cmd+S - Save
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    return false;
+                }
+                // Ctrl+P or Cmd+P - Print/Screenshot
+                if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                    e.preventDefault();
+                    showProtectionWarning('Screenshot Dilarang', 'Mengambil screenshot dari halaman ini tidak diperbolehkan.');
+                    return false;
+                }
+                // Ctrl+Shift+I or F12 - Developer Tools
+                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                    e.preventDefault();
+                    showProtectionWarning('Akses Ditolak', 'Akses ke tools pengembang tidak diperbolehkan.');
+                    return false;
+                }
+            });
+
+            // Disable developer tools access (basic detection)
+            let devToolsOpen = false;
+            const threshold = 160;
+            
+            setInterval(() => {
+                if (window.outerHeight - window.innerHeight > threshold || window.outerWidth - window.innerWidth > threshold) {
+                    if (!devToolsOpen) {
+                        devToolsOpen = true;
+                        console.clear();
+                        showProtectionWarning('Akses Ditolak', 'Jangan coba membuka Developer Tools. Konten dilindungi oleh sistem keamanan.');
+                    }
+                } else {
+                    devToolsOpen = false;
+                }
+            }, 500);
+
+            // Disable image right-click
+            document.querySelectorAll('img').forEach(img => {
+                img.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    showProtectionWarning('Proteksi Konten', 'Mengunduh atau menyalin gambar tidak diperbolehkan.');
+                    return false;
+                });
+                img.addEventListener('dragstart', (e) => {
+                    e.preventDefault();
+                    return false;
+                });
+                img.addEventListener('mousedown', (e) => {
+                    if (e.button === 2) { // Right-click
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            console.log('[v0] Content protection system initialized');
+        }
+
+        function showProtectionWarning(title, message) {
+            // Create warning notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 z-50 bg-red-600/95 text-white px-6 py-4 rounded-xl shadow-2xl border border-red-400/50 animate-pulse max-w-sm';
+            notification.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-exclamation-triangle text-2xl flex-shrink-0 mt-0.5"></i>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-base mb-1">${title}</h3>
+                        <p class="text-sm font-semibold">${message}</p>
+                    </div>
+                    <button class="ml-2 text-white/70 hover:text-white transition-colors" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+
+            // Play warning sound (optional)
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.2);
+            } catch (e) {
+                // Audio context not available
+            }
+        }
+
+        // Initialize content protection when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initContentProtection);
+        } else {
+            initContentProtection();
+        }
 
         // --- KATEGORISASI & ATURAN PENGURUTAN CUSTOM ---
         // Aturan: Karakter Spesial (-, _, . dll) -> Angka (0-9) -> Huruf (A-Z)
