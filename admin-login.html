@@ -212,16 +212,10 @@
     </div>
 
     <script>
-        // Supabase initialization
-        const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-        const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         // Default admin credentials (username: admin, password: admin123)
         const DEFAULT_ADMIN = {
             username: 'admin',
-            password_hash: 'e0ac1ab7b0e7a5b8c9d3e4f5a6b7c8d9' // SHA256 of "admin123"
+            password: 'admin123'
         };
 
         const loginForm = document.getElementById('loginForm');
@@ -233,56 +227,67 @@
         const errorMessage = document.getElementById('errorMessage');
         const successMessage = document.getElementById('successMessage');
 
-        loginForm.addEventListener('submit', async (e) => {
+        // Check if already logged in on page load
+        window.addEventListener('load', () => {
+            if (localStorage.getItem('adminSession')) {
+                console.log('[v0] Admin session ditemukan, redirect...');
+                window.location.href = 'admin-dashboard.html';
+            }
+        });
+
+        loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
             const username = usernameInput.value.trim();
             const password = passwordInput.value;
+
+            console.log('[v0] Login attempt:', { username, passwordLength: password.length });
 
             // Show loading state
             loginBtn.disabled = true;
             spinner.style.display = 'inline-block';
             btnText.textContent = 'Memproses...';
             errorMessage.style.display = 'none';
+            errorMessage.textContent = '';
 
-            try {
-                // Simple admin login check
-                if (username === DEFAULT_ADMIN.username && password === 'admin123') {
-                    // Store admin session in localStorage
-                    localStorage.setItem('adminSession', JSON.stringify({
-                        username: username,
-                        loginTime: new Date().toISOString(),
-                        token: btoa(username + ':' + Date.now())
-                    }));
+            // Simple admin login check
+            if (username === DEFAULT_ADMIN.username && password === DEFAULT_ADMIN.password) {
+                console.log('[v0] Login credentials valid');
+                
+                // Store admin session in localStorage
+                const sessionData = {
+                    username: username,
+                    loginTime: new Date().toISOString(),
+                    token: btoa(username + ':' + Date.now())
+                };
+                
+                localStorage.setItem('adminSession', JSON.stringify(sessionData));
+                console.log('[v0] Admin session saved:', sessionData);
 
-                    successMessage.textContent = 'Login berhasil! Redirect...';
-                    successMessage.style.display = 'block';
+                successMessage.textContent = 'Login berhasil! Redirect ke dashboard...';
+                successMessage.style.display = 'block';
 
-                    // Redirect to admin dashboard
-                    setTimeout(() => {
-                        window.location.href = 'admin-dashboard.html';
-                    }, 1500);
-                } else {
-                    errorMessage.textContent = 'Username atau password salah!';
-                    errorMessage.style.display = 'block';
-                    loginBtn.disabled = false;
-                    spinner.style.display = 'none';
-                    btnText.textContent = 'Masuk';
-                }
-            } catch (error) {
-                console.error('[v0] Login error:', error);
-                errorMessage.textContent = 'Terjadi kesalahan. Silakan coba lagi.';
+                // Redirect to admin dashboard
+                setTimeout(() => {
+                    console.log('[v0] Redirecting to admin-dashboard.html');
+                    window.location.href = 'admin-dashboard.html';
+                }, 1500);
+            } else {
+                console.log('[v0] Login credentials invalid');
+                console.log('[v0] Expected:', DEFAULT_ADMIN.username, DEFAULT_ADMIN.password);
+                console.log('[v0] Received:', username, password);
+                
+                errorMessage.textContent = '❌ Username atau password salah! (Gunakan: admin / admin123)';
                 errorMessage.style.display = 'block';
                 loginBtn.disabled = false;
                 spinner.style.display = 'none';
                 btnText.textContent = 'Masuk';
+                
+                // Clear password field
+                passwordInput.value = '';
+                passwordInput.focus();
             }
         });
-
-        // Check if already logged in
-        if (localStorage.getItem('adminSession')) {
-            window.location.href = 'admin-dashboard.html';
-        }
     </script>
 </body>
 </html>
