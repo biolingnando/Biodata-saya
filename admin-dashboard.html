@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - WINORO</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            color: #1a1a1a;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .admin-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #999;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-header h2 {
+            font-size: 22px;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .item-content {
+            padding: 16px;
+        }
+
+        .item-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+
+        .item-desc {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .edit-btn, .delete-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .edit-btn {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .edit-btn:hover {
+            background: #bbdefb;
+        }
+
+        .delete-btn {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .delete-btn:hover {
+            background: #ffcdd2;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .form-actions button {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .cancel-btn {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .cancel-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: #ddd;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            display: none;
+            z-index: 300;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.success {
+            background: #4caf50;
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .items-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+        <div class="user-info">
+            <span id="username">Admin</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('games')">
+                <i class="fas fa-gamepad"></i> Games
+            </button>
+            <button class="tab-btn" onclick="switchTab('apps')">
+                <i class="fas fa-mobile-alt"></i> Aplikasi
+            </button>
+        </div>
+
+        <!-- GAMES TAB -->
+        <div id="games" class="tab-content active">
+            <div class="section-header">
+                <h2>Kelola Games</h2>
+                <button class="add-btn" onclick="openAddGameModal()">
+                    <i class="fas fa-plus"></i> Tambah Game
+                </button>
+            </div>
+            <div id="gamesList" class="items-grid"></div>
+        </div>
+
+        <!-- APPS TAB -->
+        <div id="apps" class="tab-content">
+            <div class="section-header">
+                <h2>Kelola Aplikasi</h2>
+                <button class="add-btn" onclick="openAddAppModal()">
+                    <i class="fas fa-plus"></i> Tambah Aplikasi
+                </button>
+            </div>
+            <div id="appsList" class="items-grid"></div>
+        </div>
+    </div>
+
+    <!-- MODAL ADD/EDIT GAME -->
+    <div id="gameModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="gameModalTitle">Tambah Game</span>
+                <button class="close-btn" onclick="closeGameModal()">&times;</button>
+            </div>
+            <form id="gameForm" onsubmit="saveGame(event)">
+                <div class="form-group">
+                    <label>Judul Game</label>
+                    <input type="text" id="gameTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi</label>
+                    <textarea id="gameDesc" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>URL Gambar</label>
+                    <input type="url" id="gameImage" required>
+                </div>
+                <div class="form-group">
+                    <label>URL Download</label>
+                    <input type="url" id="gameDownload" required>
+                </div>
+                <div class="form-group">
+                    <label>Ukuran File</label>
+                    <input type="text" id="gameSize" placeholder="e.g., 250 MB">
+                </div>
+                <div class="form-group">
+                    <label>Versi</label>
+                    <input type="text" id="gameVersion" value="1.0">
+                </div>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <input type="text" id="gameCategory" placeholder="e.g., Action, Puzzle">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">Simpan Game</button>
+                    <button type="button" class="cancel-btn" onclick="closeGameModal()">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL ADD/EDIT APP -->
+    <div id="appModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="appModalTitle">Tambah Aplikasi</span>
+                <button class="close-btn" onclick="closeAppModal()">&times;</button>
+            </div>
+            <form id="appForm" onsubmit="saveApp(event)">
+                <div class="form-group">
+                    <label>Judul Aplikasi</label>
+                    <input type="text" id="appTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi</label>
+                    <textarea id="appDesc" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>URL Gambar</label>
+                    <input type="url" id="appImage" required>
+                </div>
+                <div class="form-group">
+                    <label>URL Download</label>
+                    <input type="url" id="appDownload" required>
+                </div>
+                <div class="form-group">
+                    <label>Ukuran File</label>
+                    <input type="text" id="appSize" placeholder="e.g., 150 MB">
+                </div>
+                <div class="form-group">
+                    <label>Versi</label>
+                    <input type="text" id="appVersion" value="1.0">
+                </div>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <input type="text" id="appCategory" placeholder="e.g., Productivity, Utility">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">Simpan Aplikasi</button>
+                    <button type="button" class="cancel-btn" onclick="closeAppModal()">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Supabase initialization
+        const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+        const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentEditingId = null;
+        let currentEditingType = null;
+
+        // Check admin session
+        window.addEventListener('load', () => {
+            const session = localStorage.getItem('adminSession');
+            if (!session) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+            
+            const admin = JSON.parse(session);
+            document.getElementById('username').textContent = admin.username;
+            
+            loadGames();
+            loadApps();
+        });
+
+        function logout() {
+            localStorage.removeItem('adminSession');
+            window.location.href = 'admin-login.html';
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tab).classList.add('active');
+            event.target.closest('.tab-btn').classList.add('active');
+        }
+
+        // GAMES MANAGEMENT
+        async function loadGames() {
+            try {
+                const { data, error } = await supabase
+                    .from('games')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const gamesList = document.getElementById('gamesList');
+                if (!data || data.length === 0) {
+                    gamesList.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Belum ada game. Tambahkan game baru!</p></div>';
+                    return;
+                }
+
+                gamesList.innerHTML = data.map(game => `
+                    <div class="item-card">
+                        <img src="${game.image_url}" alt="${game.title}" class="item-image">
+                        <div class="item-content">
+                            <div class="item-title">${game.title}</div>
+                            <div class="item-desc">${game.description}</div>
+                            <small style="color:#999">v${game.version} • ${game.file_size}</small>
+                            <div class="item-actions" style="margin-top:12px">
+                                <button class="edit-btn" onclick="editGame('${game.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="delete-btn" onclick="deleteGame('${game.id}')">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('[v0] Load games error:', error);
+                showNotification('Error loading games', 'error');
+            }
+        }
+
+        function openAddGameModal() {
+            currentEditingId = null;
+            currentEditingType = 'games';
+            document.getElementById('gameModalTitle').textContent = 'Tambah Game';
+            document.getElementById('gameForm').reset();
+            document.getElementById('gameModal').classList.add('active');
+        }
+
+        async function editGame(id) {
+            const { data, error } = await supabase.from('games').select('*').eq('id', id).single();
+            if (error) { console.error(error); return; }
+
+            currentEditingId = id;
+            currentEditingType = 'games';
+            document.getElementById('gameModalTitle').textContent = 'Edit Game';
+            document.getElementById('gameTitle').value = data.title;
+            document.getElementById('gameDesc').value = data.description;
+            document.getElementById('gameImage').value = data.image_url;
+            document.getElementById('gameDownload').value = data.download_url;
+            document.getElementById('gameSize').value = data.file_size;
+            document.getElementById('gameVersion').value = data.version;
+            document.getElementById('gameCategory').value = data.category;
+            document.getElementById('gameModal').classList.add('active');
+        }
+
+        async function saveGame(e) {
+            e.preventDefault();
+            const gameData = {
+                title: document.getElementById('gameTitle').value,
+                description: document.getElementById('gameDesc').value,
+                image_url: document.getElementById('gameImage').value,
+                download_url: document.getElementById('gameDownload').value,
+                file_size: document.getElementById('gameSize').value,
+                version: document.getElementById('gameVersion').value,
+                category: document.getElementById('gameCategory').value,
+                updated_at: new Date().toISOString()
+            };
+
+            try {
+                if (currentEditingId) {
+                    const { error } = await supabase.from('games').update(gameData).eq('id', currentEditingId);
+                    if (error) throw error;
+                    showNotification('Game updated successfully!', 'success');
+                } else {
+                    const { error } = await supabase.from('games').insert([gameData]);
+                    if (error) throw error;
+                    showNotification('Game added successfully!', 'success');
+                }
+                closeGameModal();
+                loadGames();
+            } catch (error) {
+                console.error('[v0] Save game error:', error);
+                showNotification('Error saving game', 'error');
+            }
+        }
+
+        async function deleteGame(id) {
+            if (!confirm('Hapus game ini?')) return;
+            
+            try {
+                const { error } = await supabase.from('games').delete().eq('id', id);
+                if (error) throw error;
+                showNotification('Game deleted successfully!', 'success');
+                loadGames();
+            } catch (error) {
+                console.error('[v0] Delete game error:', error);
+                showNotification('Error deleting game', 'error');
+            }
+        }
+
+        function closeGameModal() {
+            document.getElementById('gameModal').classList.remove('active');
+            currentEditingId = null;
+        }
+
+        // APPS MANAGEMENT
+        async function loadApps() {
+            try {
+                const { data, error } = await supabase
+                    .from('applications')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const appsList = document.getElementById('appsList');
+                if (!data || data.length === 0) {
+                    appsList.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Belum ada aplikasi. Tambahkan aplikasi baru!</p></div>';
+                    return;
+                }
+
+                appsList.innerHTML = data.map(app => `
+                    <div class="item-card">
+                        <img src="${app.image_url}" alt="${app.title}" class="item-image">
+                        <div class="item-content">
+                            <div class="item-title">${app.title}</div>
+                            <div class="item-desc">${app.description}</div>
+                            <small style="color:#999">v${app.version} • ${app.file_size}</small>
+                            <div class="item-actions" style="margin-top:12px">
+                                <button class="edit-btn" onclick="editApp('${app.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="delete-btn" onclick="deleteApp('${app.id}')">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('[v0] Load apps error:', error);
+                showNotification('Error loading apps', 'error');
+            }
+        }
+
+        function openAddAppModal() {
+            currentEditingId = null;
+            currentEditingType = 'apps';
+            document.getElementById('appModalTitle').textContent = 'Tambah Aplikasi';
+            document.getElementById('appForm').reset();
+            document.getElementById('appModal').classList.add('active');
+        }
+
+        async function editApp(id) {
+            const { data, error } = await supabase.from('applications').select('*').eq('id', id).single();
+            if (error) { console.error(error); return; }
+
+            currentEditingId = id;
+            currentEditingType = 'apps';
+            document.getElementById('appModalTitle').textContent = 'Edit Aplikasi';
+            document.getElementById('appTitle').value = data.title;
+            document.getElementById('appDesc').value = data.description;
+            document.getElementById('appImage').value = data.image_url;
+            document.getElementById('appDownload').value = data.download_url;
+            document.getElementById('appSize').value = data.file_size;
+            document.getElementById('appVersion').value = data.version;
+            document.getElementById('appCategory').value = data.category;
+            document.getElementById('appModal').classList.add('active');
+        }
+
+        async function saveApp(e) {
+            e.preventDefault();
+            const appData = {
+                title: document.getElementById('appTitle').value,
+                description: document.getElementById('appDesc').value,
+                image_url: document.getElementById('appImage').value,
+                download_url: document.getElementById('appDownload').value,
+                file_size: document.getElementById('appSize').value,
+                version: document.getElementById('appVersion').value,
+                category: document.getElementById('appCategory').value,
+                updated_at: new Date().toISOString()
+            };
+
+            try {
+                if (currentEditingId) {
+                    const { error } = await supabase.from('applications').update(appData).eq('id', currentEditingId);
+                    if (error) throw error;
+                    showNotification('Application updated successfully!', 'success');
+                } else {
+                    const { error } = await supabase.from('applications').insert([appData]);
+                    if (error) throw error;
+                    showNotification('Application added successfully!', 'success');
+                }
+                closeAppModal();
+                loadApps();
+            } catch (error) {
+                console.error('[v0] Save app error:', error);
+                showNotification('Error saving application', 'error');
+            }
+        }
+
+        async function deleteApp(id) {
+            if (!confirm('Hapus aplikasi ini?')) return;
+            
+            try {
+                const { error } = await supabase.from('applications').delete().eq('id', id);
+                if (error) throw error;
+                showNotification('Application deleted successfully!', 'success');
+                loadApps();
+            } catch (error) {
+                console.error('[v0] Delete app error:', error);
+                showNotification('Error deleting application', 'error');
+            }
+        }
+
+        function closeAppModal() {
+            document.getElementById('appModal').classList.remove('active');
+            currentEditingId = null;
+        }
+
+        function showNotification(message, type) {
+            const notif = document.getElementById('notification');
+            notif.textContent = message;
+            notif.className = `notification ${type}`;
+            notif.style.display = 'block';
+            
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 3000);
+        }
+
+        // Close modals when clicking outside
+        document.getElementById('gameModal').addEventListener('click', (e) => {
+            if (e.target.id === 'gameModal') closeGameModal();
+        });
+
+        document.getElementById('appModal').addEventListener('click', (e) => {
+            if (e.target.id === 'appModal') closeAppModal();
+        });
+    </script>
+</body>
+</html>
