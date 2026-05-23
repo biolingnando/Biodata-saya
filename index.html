@@ -43,6 +43,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -1440,10 +1442,63 @@
         }
 
         // --- INITIALIZE APPLICATION ---
-        function initializeApp() {
+        async function initializeApp() {
             try {
                 initTheme();
                 updateLayoutButtons();
+                
+                // Load data from Supabase database
+                const supabaseClient = window.supabase?.createClient(
+                    'https://awkdqmrpqgwjhvpdffng.supabase.co',
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a2RxbXJwcWd3amh2cGRmZm5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0MDgwNDUsImV4cCI6MjA5NDk4NDA0NX0.Q6nUpfVi8f_P4v0C_JUnP8TrAQH4PFQ6zSPlBuFr54c'
+                );
+
+                if (supabaseClient) {
+                    try {
+                        // Fetch games
+                        const { data: games, error: gamesError } = await supabaseClient
+                            .from('games')
+                            .select('*')
+                            .order('created_at', { ascending: false });
+
+                        // Fetch applications
+                        const { data: apps, error: appsError } = await supabaseClient
+                            .from('applications')
+                            .select('*')
+                            .order('created_at', { ascending: false });
+
+                        // Convert to ITEMS_DATA format
+                        const convertedGames = (games || []).map(game => ({
+                            name: game.title,
+                            type: 'game',
+                            category: game.category || 'Game',
+                            desc: game.description || 'Tidak ada deskripsi',
+                            image: game.image_url,
+                            downloadLink: game.download_url,
+                            rating: game.rating || 0,
+                            badge: null,
+                            badgeColor: ''
+                        }));
+
+                        const convertedApps = (apps || []).map(app => ({
+                            name: app.title,
+                            type: 'app',
+                            category: app.category || 'Aplikasi',
+                            desc: app.description || 'Tidak ada deskripsi',
+                            image: app.image_url,
+                            downloadLink: app.download_url,
+                            rating: app.rating || 0,
+                            badge: null,
+                            badgeColor: ''
+                        }));
+
+                        ITEMS_DATA = [...convertedGames, ...convertedApps];
+                        console.log('[v0] Loaded', ITEMS_DATA.length, 'items from Supabase');
+                    } catch (dbError) {
+                        console.warn('[v0] Database load error, using fallback data:', dbError.message);
+                    }
+                }
+                
                 renderItems();
                 console.log('[v0] Application initialized successfully');
             } catch (e) {

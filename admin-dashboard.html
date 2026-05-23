@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,8 +15,9 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #1a1a1a;
+            min-height: 100vh;
         }
 
         .admin-header {
@@ -59,7 +60,7 @@
         }
 
         .admin-container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 30px 20px;
         }
@@ -68,7 +69,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 30px;
-            border-bottom: 2px solid #e0e0e0;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .tab-btn {
@@ -77,36 +78,45 @@
             border: none;
             cursor: pointer;
             font-weight: 600;
-            color: #999;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.7);
             font-size: 16px;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
         }
 
         .tab-btn.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
+            color: white;
+            border-bottom-color: white;
         }
 
         .tab-content {
             display: none;
+            animation: fadeIn 0.3s ease;
         }
 
         .tab-content.active {
             display: block;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .section-header h2 {
-            font-size: 22px;
-            color: #1a1a1a;
-            font-weight: 700;
+            font-size: 20px;
+            color: #667eea;
         }
 
         .add-btn {
@@ -114,30 +124,27 @@
             color: white;
             border: none;
             padding: 10px 20px;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .add-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
         .items-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
 
         .item-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
@@ -156,21 +163,20 @@
         }
 
         .item-content {
-            padding: 16px;
+            padding: 15px;
         }
 
         .item-title {
             font-size: 16px;
             font-weight: 700;
-            color: #1a1a1a;
             margin-bottom: 8px;
-            word-break: break-word;
+            color: #1a1a1a;
         }
 
         .item-desc {
             font-size: 13px;
             color: #666;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -182,37 +188,33 @@
             gap: 8px;
         }
 
-        .edit-btn, .delete-btn {
+        .action-btn {
             flex: 1;
-            padding: 8px 12px;
+            padding: 8px;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 12px;
             font-weight: 600;
-            font-size: 13px;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
         }
 
         .edit-btn {
-            background: #e3f2fd;
-            color: #1976d2;
+            background: #4a90e2;
+            color: white;
         }
 
         .edit-btn:hover {
-            background: #bbdefb;
+            background: #357abd;
         }
 
         .delete-btn {
-            background: #ffebee;
-            color: #c62828;
+            background: #e74c3c;
+            color: white;
         }
 
         .delete-btn:hover {
-            background: #ffcdd2;
+            background: #c0392b;
         }
 
         .modal {
@@ -222,11 +224,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 200;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
             align-items: center;
             justify-content: center;
-            padding: 20px;
         }
 
         .modal.active {
@@ -235,23 +236,27 @@
 
         .modal-content {
             background: white;
-            border-radius: 16px;
+            border-radius: 8px;
             padding: 30px;
             max-width: 500px;
-            width: 100%;
+            width: 90%;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
         .modal-header {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-header h3 {
+            color: #667eea;
+            font-size: 18px;
         }
 
         .close-btn {
@@ -262,31 +267,37 @@
             color: #999;
         }
 
+        .close-btn:hover {
+            color: #1a1a1a;
+        }
+
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 15px;
         }
 
         .form-group label {
             display: block;
+            margin-bottom: 5px;
+            color: #1a1a1a;
             font-weight: 600;
-            color: #333;
-            margin-bottom: 6px;
             font-size: 14px;
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
-            padding: 10px 12px;
+            padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
             font-size: 14px;
-            font-family: inherit;
-            transition: all 0.3s ease;
+            transition: border-color 0.3s ease;
         }
 
         .form-group input:focus,
-        .form-group textarea:focus {
+        .form-group textarea:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -303,15 +314,15 @@
             margin-top: 25px;
         }
 
-        .form-actions button {
+        .save-btn, .cancel-btn {
             flex: 1;
-            padding: 10px 16px;
+            padding: 10px;
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            font-weight: 600;
             font-size: 14px;
+            transition: all 0.3s ease;
         }
 
         .save-btn {
@@ -320,13 +331,13 @@
         }
 
         .save-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
         .cancel-btn {
             background: #f0f0f0;
-            color: #333;
+            color: #1a1a1a;
         }
 
         .cancel-btn:hover {
@@ -335,36 +346,27 @@
 
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: #999;
         }
 
         .empty-state i {
             font-size: 48px;
-            color: #ddd;
-            margin-bottom: 16px;
-            display: block;
+            margin-bottom: 15px;
+            opacity: 0.5;
         }
 
         .notification {
             position: fixed;
-            bottom: 20px;
+            top: 20px;
             right: 20px;
-            padding: 16px 24px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            display: none;
-            z-index: 300;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
             animation: slideIn 0.3s ease;
-        }
-
-        .notification.success {
-            background: #4caf50;
-        }
-
-        .notification.error {
-            background: #f44336;
+            max-width: 300px;
         }
 
         @keyframes slideIn {
@@ -378,27 +380,56 @@
             }
         }
 
-        @media (max-width: 768px) {
-            .items-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            }
+        .notification.success {
+            border-left: 4px solid #27ae60;
+        }
 
-            .modal-content {
-                padding: 20px;
-            }
+        .notification.error {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .notification.success i {
+            color: #27ae60;
+        }
+
+        .notification.error i {
+            color: #e74c3c;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(102, 126, 234, 0.2);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
+    <!-- Header -->
     <div class="admin-header">
-        <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+        <h1>📊 Admin Dashboard</h1>
         <div class="user-info">
             <span id="username">Admin</span>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
     </div>
 
+    <!-- Main Container -->
     <div class="admin-container">
+        <!-- Tabs -->
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('games')">
                 <i class="fas fa-gamepad"></i> Games
@@ -408,7 +439,7 @@
             </button>
         </div>
 
-        <!-- GAMES TAB -->
+        <!-- Games Tab -->
         <div id="games" class="tab-content active">
             <div class="section-header">
                 <h2>Kelola Games</h2>
@@ -416,10 +447,15 @@
                     <i class="fas fa-plus"></i> Tambah Game
                 </button>
             </div>
-            <div id="gamesList" class="items-grid"></div>
+            <div id="gamesList" class="items-grid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading games...</p>
+                </div>
+            </div>
         </div>
 
-        <!-- APPS TAB -->
+        <!-- Apps Tab -->
         <div id="apps" class="tab-content">
             <div class="section-header">
                 <h2>Kelola Aplikasi</h2>
@@ -427,140 +463,101 @@
                     <i class="fas fa-plus"></i> Tambah Aplikasi
                 </button>
             </div>
-            <div id="appsList" class="items-grid"></div>
+            <div id="appsList" class="items-grid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading aplikasi...</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- MODAL ADD/EDIT GAME -->
-    <div id="gameModal" class="modal">
+    <!-- Add/Edit Modal -->
+    <div id="itemModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <span id="gameModalTitle">Tambah Game</span>
-                <button class="close-btn" onclick="closeGameModal()">&times;</button>
+                <h3 id="modalTitle">Tambah Game</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
-            <form id="gameForm" onsubmit="saveGame(event)">
+            <form id="itemForm" onsubmit="saveItem(event)">
                 <div class="form-group">
-                    <label>Judul Game</label>
-                    <input type="text" id="gameTitle" required>
+                    <label>Judul *</label>
+                    <input type="text" id="itemTitle" required placeholder="Masukkan judul game/aplikasi">
                 </div>
                 <div class="form-group">
-                    <label>Deskripsi</label>
-                    <textarea id="gameDesc" required></textarea>
+                    <label>Deskripsi *</label>
+                    <textarea id="itemDesc" required placeholder="Masukkan deskripsi..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>URL Gambar</label>
-                    <input type="url" id="gameImage" required>
+                    <label>URL Gambar *</label>
+                    <input type="url" id="itemImage" required placeholder="https://...">
                 </div>
                 <div class="form-group">
-                    <label>URL Download</label>
-                    <input type="url" id="gameDownload" required>
+                    <label>URL Download *</label>
+                    <input type="url" id="itemDownload" required placeholder="https://...">
                 </div>
                 <div class="form-group">
                     <label>Ukuran File</label>
-                    <input type="text" id="gameSize" placeholder="e.g., 250 MB">
-                </div>
-                <div class="form-group">
-                    <label>Versi</label>
-                    <input type="text" id="gameVersion" value="1.0">
+                    <input type="text" id="itemSize" placeholder="e.g., 150 MB">
                 </div>
                 <div class="form-group">
                     <label>Kategori</label>
-                    <input type="text" id="gameCategory" placeholder="e.g., Action, Puzzle">
+                    <input type="text" id="itemCategory" placeholder="e.g., Action, RPG">
+                </div>
+                <div class="form-group">
+                    <label>Versi</label>
+                    <input type="text" id="itemVersion" placeholder="e.g., 1.0.0" value="1.0">
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="save-btn">Simpan Game</button>
-                    <button type="button" class="cancel-btn" onclick="closeGameModal()">Batal</button>
+                    <button type="submit" class="save-btn">Simpan</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal()">Batal</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL ADD/EDIT APP -->
-    <div id="appModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span id="appModalTitle">Tambah Aplikasi</span>
-                <button class="close-btn" onclick="closeAppModal()">&times;</button>
-            </div>
-            <form id="appForm" onsubmit="saveApp(event)">
-                <div class="form-group">
-                    <label>Judul Aplikasi</label>
-                    <input type="text" id="appTitle" required>
-                </div>
-                <div class="form-group">
-                    <label>Deskripsi</label>
-                    <textarea id="appDesc" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>URL Gambar</label>
-                    <input type="url" id="appImage" required>
-                </div>
-                <div class="form-group">
-                    <label>URL Download</label>
-                    <input type="url" id="appDownload" required>
-                </div>
-                <div class="form-group">
-                    <label>Ukuran File</label>
-                    <input type="text" id="appSize" placeholder="e.g., 150 MB">
-                </div>
-                <div class="form-group">
-                    <label>Versi</label>
-                    <input type="text" id="appVersion" value="1.0">
-                </div>
-                <div class="form-group">
-                    <label>Kategori</label>
-                    <input type="text" id="appCategory" placeholder="e.g., Productivity, Utility">
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="save-btn">Simpan Aplikasi</button>
-                    <button type="button" class="cancel-btn" onclick="closeAppModal()">Batal</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="notification" class="notification"></div>
-
+    <!-- Script Supabase -->
     <script>
-        // Supabase initialization
-        const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-        const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://awkdqmrpqgwjhvpdffng.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a2RxbXJwcWd3amh2cGRmZm5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0MDgwNDUsImV4cCI6MjA5NDk4NDA0NX0.Q6nUpfVi8f_P4v0C_JUnP8TrAQH4PFQ6zSPlBuFr54c';
 
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let currentEditingId = null;
-        let currentEditingType = null;
+        let currentTab = 'games';
+        let editingId = null;
+        let isEditMode = false;
 
-        // Check admin session
+        // Check admin session on page load
         window.addEventListener('load', () => {
-            const session = localStorage.getItem('adminSession');
-            if (!session) {
+            if (!localStorage.getItem('adminSession')) {
                 window.location.href = 'admin-login.html';
-                return;
+            } else {
+                loadGames();
             }
-            
-            const admin = JSON.parse(session);
-            document.getElementById('username').textContent = admin.username;
-            
-            loadGames();
-            loadApps();
         });
 
-        function logout() {
-            localStorage.removeItem('adminSession');
-            window.location.href = 'admin-login.html';
-        }
-
+        // Tab Switching
         function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
-            document.getElementById(tab).classList.add('active');
             event.target.closest('.tab-btn').classList.add('active');
+            document.getElementById(tab).classList.add('active');
+
+            if (tab === 'games') {
+                loadGames();
+            } else {
+                loadApps();
+            }
         }
 
-        // GAMES MANAGEMENT
+        // Load Games
         async function loadGames() {
+            const gamesList = document.getElementById('gamesList');
+            gamesList.innerHTML = '<div class="loading"><div class="spinner"></div><p>Memuat games...</p></div>';
+
             try {
                 const { data, error } = await supabase
                     .from('games')
@@ -569,113 +566,38 @@
 
                 if (error) throw error;
 
-                const gamesList = document.getElementById('gamesList');
                 if (!data || data.length === 0) {
-                    gamesList.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Belum ada game. Tambahkan game baru!</p></div>';
-                    return;
-                }
-
-                gamesList.innerHTML = data.map(game => `
-                    <div class="item-card">
-                        <img src="${game.image_url}" alt="${game.title}" class="item-image">
-                        <div class="item-content">
-                            <div class="item-title">${game.title}</div>
-                            <div class="item-desc">${game.description}</div>
-                            <small style="color:#999">v${game.version} • ${game.file_size}</small>
-                            <div class="item-actions" style="margin-top:12px">
-                                <button class="edit-btn" onclick="editGame('${game.id}')">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button class="delete-btn" onclick="deleteGame('${game.id}')">
-                                    <i class="fas fa-trash"></i> Hapus
-                                </button>
+                    gamesList.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Belum ada game. Silakan tambah game baru.</p></div>';
+                } else {
+                    gamesList.innerHTML = data.map(game => `
+                        <div class="item-card">
+                            <img src="${game.image_url}" alt="${game.title}" class="item-image">
+                            <div class="item-content">
+                                <div class="item-title">${game.title}</div>
+                                <div class="item-desc">${game.description || 'Tidak ada deskripsi'}</div>
+                                <div class="item-actions">
+                                    <button class="action-btn edit-btn" onclick="editGame('${game.id}')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="action-btn delete-btn" onclick="deleteGame('${game.id}')">
+                                        <i class="fas fa-trash"></i> Hapus
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('[v0] Load games error:', error);
-                showNotification('Error loading games', 'error');
-            }
-        }
-
-        function openAddGameModal() {
-            currentEditingId = null;
-            currentEditingType = 'games';
-            document.getElementById('gameModalTitle').textContent = 'Tambah Game';
-            document.getElementById('gameForm').reset();
-            document.getElementById('gameModal').classList.add('active');
-        }
-
-        async function editGame(id) {
-            const { data, error } = await supabase.from('games').select('*').eq('id', id).single();
-            if (error) { console.error(error); return; }
-
-            currentEditingId = id;
-            currentEditingType = 'games';
-            document.getElementById('gameModalTitle').textContent = 'Edit Game';
-            document.getElementById('gameTitle').value = data.title;
-            document.getElementById('gameDesc').value = data.description;
-            document.getElementById('gameImage').value = data.image_url;
-            document.getElementById('gameDownload').value = data.download_url;
-            document.getElementById('gameSize').value = data.file_size;
-            document.getElementById('gameVersion').value = data.version;
-            document.getElementById('gameCategory').value = data.category;
-            document.getElementById('gameModal').classList.add('active');
-        }
-
-        async function saveGame(e) {
-            e.preventDefault();
-            const gameData = {
-                title: document.getElementById('gameTitle').value,
-                description: document.getElementById('gameDesc').value,
-                image_url: document.getElementById('gameImage').value,
-                download_url: document.getElementById('gameDownload').value,
-                file_size: document.getElementById('gameSize').value,
-                version: document.getElementById('gameVersion').value,
-                category: document.getElementById('gameCategory').value,
-                updated_at: new Date().toISOString()
-            };
-
-            try {
-                if (currentEditingId) {
-                    const { error } = await supabase.from('games').update(gameData).eq('id', currentEditingId);
-                    if (error) throw error;
-                    showNotification('Game updated successfully!', 'success');
-                } else {
-                    const { error } = await supabase.from('games').insert([gameData]);
-                    if (error) throw error;
-                    showNotification('Game added successfully!', 'success');
+                    `).join('');
                 }
-                closeGameModal();
-                loadGames();
             } catch (error) {
-                console.error('[v0] Save game error:', error);
-                showNotification('Error saving game', 'error');
+                console.error('[v0] Error loading games:', error);
+                gamesList.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Terjadi kesalahan memuat games.</p></div>';
             }
         }
 
-        async function deleteGame(id) {
-            if (!confirm('Hapus game ini?')) return;
-            
-            try {
-                const { error } = await supabase.from('games').delete().eq('id', id);
-                if (error) throw error;
-                showNotification('Game deleted successfully!', 'success');
-                loadGames();
-            } catch (error) {
-                console.error('[v0] Delete game error:', error);
-                showNotification('Error deleting game', 'error');
-            }
-        }
-
-        function closeGameModal() {
-            document.getElementById('gameModal').classList.remove('active');
-            currentEditingId = null;
-        }
-
-        // APPS MANAGEMENT
+        // Load Apps
         async function loadApps() {
+            const appsList = document.getElementById('appsList');
+            appsList.innerHTML = '<div class="loading"><div class="spinner"></div><p>Memuat aplikasi...</p></div>';
+
             try {
                 const { data, error } = await supabase
                     .from('applications')
@@ -684,129 +606,226 @@
 
                 if (error) throw error;
 
-                const appsList = document.getElementById('appsList');
                 if (!data || data.length === 0) {
-                    appsList.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Belum ada aplikasi. Tambahkan aplikasi baru!</p></div>';
-                    return;
-                }
-
-                appsList.innerHTML = data.map(app => `
-                    <div class="item-card">
-                        <img src="${app.image_url}" alt="${app.title}" class="item-image">
-                        <div class="item-content">
-                            <div class="item-title">${app.title}</div>
-                            <div class="item-desc">${app.description}</div>
-                            <small style="color:#999">v${app.version} • ${app.file_size}</small>
-                            <div class="item-actions" style="margin-top:12px">
-                                <button class="edit-btn" onclick="editApp('${app.id}')">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button class="delete-btn" onclick="deleteApp('${app.id}')">
-                                    <i class="fas fa-trash"></i> Hapus
-                                </button>
+                    appsList.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Belum ada aplikasi. Silakan tambah aplikasi baru.</p></div>';
+                } else {
+                    appsList.innerHTML = data.map(app => `
+                        <div class="item-card">
+                            <img src="${app.image_url}" alt="${app.title}" class="item-image">
+                            <div class="item-content">
+                                <div class="item-title">${app.title}</div>
+                                <div class="item-desc">${app.description || 'Tidak ada deskripsi'}</div>
+                                <div class="item-actions">
+                                    <button class="action-btn edit-btn" onclick="editApp('${app.id}')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button class="action-btn delete-btn" onclick="deleteApp('${app.id}')">
+                                        <i class="fas fa-trash"></i> Hapus
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `).join('');
+                    `).join('');
+                }
             } catch (error) {
-                console.error('[v0] Load apps error:', error);
-                showNotification('Error loading apps', 'error');
+                console.error('[v0] Error loading apps:', error);
+                appsList.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Terjadi kesalahan memuat aplikasi.</p></div>';
             }
+        }
+
+        // Modal Functions
+        function openAddGameModal() {
+            editingId = null;
+            isEditMode = false;
+            document.getElementById('modalTitle').textContent = 'Tambah Game';
+            document.getElementById('itemForm').reset();
+            document.getElementById('itemModal').classList.add('active');
         }
 
         function openAddAppModal() {
-            currentEditingId = null;
-            currentEditingType = 'apps';
-            document.getElementById('appModalTitle').textContent = 'Tambah Aplikasi';
-            document.getElementById('appForm').reset();
-            document.getElementById('appModal').classList.add('active');
+            editingId = null;
+            isEditMode = false;
+            document.getElementById('modalTitle').textContent = 'Tambah Aplikasi';
+            document.getElementById('itemForm').reset();
+            document.getElementById('itemModal').classList.add('active');
         }
 
+        function closeModal() {
+            document.getElementById('itemModal').classList.remove('active');
+            document.getElementById('itemForm').reset();
+            editingId = null;
+            isEditMode = false;
+        }
+
+        // Edit Game
+        async function editGame(id) {
+            try {
+                const { data, error } = await supabase
+                    .from('games')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+
+                isEditMode = true;
+                editingId = id;
+                document.getElementById('modalTitle').textContent = 'Edit Game';
+                document.getElementById('itemTitle').value = data.title;
+                document.getElementById('itemDesc').value = data.description || '';
+                document.getElementById('itemImage').value = data.image_url;
+                document.getElementById('itemDownload').value = data.download_url;
+                document.getElementById('itemSize').value = data.file_size || '';
+                document.getElementById('itemCategory').value = data.category || '';
+                document.getElementById('itemVersion').value = data.version || '1.0';
+                document.getElementById('itemModal').classList.add('active');
+            } catch (error) {
+                showNotification('Error', 'Gagal memuat data game', 'error');
+            }
+        }
+
+        // Edit App
         async function editApp(id) {
-            const { data, error } = await supabase.from('applications').select('*').eq('id', id).single();
-            if (error) { console.error(error); return; }
+            try {
+                const { data, error } = await supabase
+                    .from('applications')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
 
-            currentEditingId = id;
-            currentEditingType = 'apps';
-            document.getElementById('appModalTitle').textContent = 'Edit Aplikasi';
-            document.getElementById('appTitle').value = data.title;
-            document.getElementById('appDesc').value = data.description;
-            document.getElementById('appImage').value = data.image_url;
-            document.getElementById('appDownload').value = data.download_url;
-            document.getElementById('appSize').value = data.file_size;
-            document.getElementById('appVersion').value = data.version;
-            document.getElementById('appCategory').value = data.category;
-            document.getElementById('appModal').classList.add('active');
+                if (error) throw error;
+
+                isEditMode = true;
+                editingId = id;
+                document.getElementById('modalTitle').textContent = 'Edit Aplikasi';
+                document.getElementById('itemTitle').value = data.title;
+                document.getElementById('itemDesc').value = data.description || '';
+                document.getElementById('itemImage').value = data.image_url;
+                document.getElementById('itemDownload').value = data.download_url;
+                document.getElementById('itemSize').value = data.file_size || '';
+                document.getElementById('itemCategory').value = data.category || '';
+                document.getElementById('itemVersion').value = data.version || '1.0';
+                document.getElementById('itemModal').classList.add('active');
+            } catch (error) {
+                showNotification('Error', 'Gagal memuat data aplikasi', 'error');
+            }
         }
 
-        async function saveApp(e) {
-            e.preventDefault();
-            const appData = {
-                title: document.getElementById('appTitle').value,
-                description: document.getElementById('appDesc').value,
-                image_url: document.getElementById('appImage').value,
-                download_url: document.getElementById('appDownload').value,
-                file_size: document.getElementById('appSize').value,
-                version: document.getElementById('appVersion').value,
-                category: document.getElementById('appCategory').value,
-                updated_at: new Date().toISOString()
+        // Save Item (Game or App)
+        async function saveItem(event) {
+            event.preventDefault();
+
+            const itemData = {
+                title: document.getElementById('itemTitle').value,
+                description: document.getElementById('itemDesc').value,
+                image_url: document.getElementById('itemImage').value,
+                download_url: document.getElementById('itemDownload').value,
+                file_size: document.getElementById('itemSize').value || null,
+                category: document.getElementById('itemCategory').value || null,
+                version: document.getElementById('itemVersion').value || '1.0'
             };
 
             try {
-                if (currentEditingId) {
-                    const { error } = await supabase.from('applications').update(appData).eq('id', currentEditingId);
+                const table = currentTab === 'games' ? 'games' : 'applications';
+
+                if (isEditMode) {
+                    const { error } = await supabase
+                        .from(table)
+                        .update(itemData)
+                        .eq('id', editingId);
+
                     if (error) throw error;
-                    showNotification('Application updated successfully!', 'success');
+                    showNotification('Sukses', 'Data berhasil diperbarui', 'success');
                 } else {
-                    const { error } = await supabase.from('applications').insert([appData]);
+                    const { error } = await supabase
+                        .from(table)
+                        .insert([itemData]);
+
                     if (error) throw error;
-                    showNotification('Application added successfully!', 'success');
+                    showNotification('Sukses', 'Data berhasil ditambahkan', 'success');
                 }
-                closeAppModal();
-                loadApps();
+
+                closeModal();
+                if (currentTab === 'games') {
+                    loadGames();
+                } else {
+                    loadApps();
+                }
             } catch (error) {
-                console.error('[v0] Save app error:', error);
-                showNotification('Error saving application', 'error');
+                console.error('[v0] Error saving item:', error);
+                showNotification('Error', error.message || 'Gagal menyimpan data', 'error');
             }
         }
 
-        async function deleteApp(id) {
-            if (!confirm('Hapus aplikasi ini?')) return;
-            
+        // Delete Game
+        async function deleteGame(id) {
+            if (!confirm('Yakin ingin menghapus game ini?')) return;
+
             try {
-                const { error } = await supabase.from('applications').delete().eq('id', id);
+                const { error } = await supabase
+                    .from('games')
+                    .delete()
+                    .eq('id', id);
+
                 if (error) throw error;
-                showNotification('Application deleted successfully!', 'success');
-                loadApps();
+                showNotification('Sukses', 'Game berhasil dihapus', 'success');
+                loadGames();
             } catch (error) {
-                console.error('[v0] Delete app error:', error);
-                showNotification('Error deleting application', 'error');
+                console.error('[v0] Error deleting game:', error);
+                showNotification('Error', 'Gagal menghapus game', 'error');
             }
         }
 
-        function closeAppModal() {
-            document.getElementById('appModal').classList.remove('active');
-            currentEditingId = null;
+        // Delete App
+        async function deleteApp(id) {
+            if (!confirm('Yakin ingin menghapus aplikasi ini?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('applications')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+                showNotification('Sukses', 'Aplikasi berhasil dihapus', 'success');
+                loadApps();
+            } catch (error) {
+                console.error('[v0] Error deleting app:', error);
+                showNotification('Error', 'Gagal menghapus aplikasi', 'error');
+            }
         }
 
-        function showNotification(message, type) {
-            const notif = document.getElementById('notification');
-            notif.textContent = message;
-            notif.className = `notification ${type}`;
-            notif.style.display = 'block';
-            
+        // Logout
+        function logout() {
+            if (confirm('Yakin ingin logout?')) {
+                localStorage.removeItem('adminSession');
+                window.location.href = 'admin-login.html';
+            }
+        }
+
+        // Notification
+        function showNotification(title, message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                <div>
+                    <strong>${title}</strong>
+                    <p>${message}</p>
+                </div>
+            `;
+            document.body.appendChild(notification);
+
             setTimeout(() => {
-                notif.style.display = 'none';
-            }, 3000);
+                notification.remove();
+            }, 4000);
         }
 
-        // Close modals when clicking outside
-        document.getElementById('gameModal').addEventListener('click', (e) => {
-            if (e.target.id === 'gameModal') closeGameModal();
-        });
-
-        document.getElementById('appModal').addEventListener('click', (e) => {
-            if (e.target.id === 'appModal') closeAppModal();
+        // Close modal on outside click
+        document.getElementById('itemModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('itemModal')) {
+                closeModal();
+            }
         });
     </script>
 </body>
