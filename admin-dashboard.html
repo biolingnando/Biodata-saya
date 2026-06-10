@@ -518,24 +518,78 @@
 
     <!-- Script Supabase -->
     <script>
+        // Security: Verify admin session before anything loads
+        function verifyAdminSession() {
+            const adminSession = localStorage.getItem('adminSession');
+            const sessionExpiry = localStorage.getItem('adminSessionExpiry');
+            
+            if (!adminSession || !sessionExpiry) {
+                console.log('[v0] No valid admin session found, redirecting to login...');
+                window.location.href = 'admin-login.html?error=notlogin';
+                return false;
+            }
+
+            const expiryTime = parseInt(sessionExpiry);
+            if (Date.now() > expiryTime) {
+                console.log('[v0] Admin session expired');
+                localStorage.removeItem('adminSession');
+                localStorage.removeItem('adminSessionExpiry');
+                localStorage.removeItem('adminUsername');
+                window.location.href = 'admin-login.html?error=expired';
+                return false;
+            }
+
+            console.log('[v0] Valid admin session verified');
+            return true;
+        }
+
+        // Verify immediately before page renders
+        if (!verifyAdminSession()) {
+            throw new Error('Unauthorized access - Invalid session');
+        }
+
         // Supabase Configuration
         const SUPABASE_URL = 'https://awkdqmrpqgwjhvpdffng.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3a2RxbXJwcWd3amh2cGRmZm5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0MDgwNDUsImV4cCI6MjA5NDk4NDA0NX0.Q6nUpfVi8f_P4v0C_JUnP8TrAQH4PFQ6zSPlBuFr54c';
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+        let supabase = null;
         let currentTab = 'games';
         let editingId = null;
         let isEditMode = false;
 
+        // Initialize Supabase
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('[v0] Supabase client initialized');
+        } catch (error) {
+            console.error('[v0] Supabase init error:', error);
+        }
+
         // Check admin session on page load
         window.addEventListener('load', () => {
-            if (!localStorage.getItem('adminSession')) {
-                window.location.href = 'admin-login.html';
-            } else {
-                loadGames();
-            }
+            // Display username
+            document.getElementById('username').textContent = localStorage.getItem('adminUsername') || 'Admin';
+            
+            // Load games by default
+            loadGames();
+            
+            // Setup auto-logout on session expiry
+            setupSessionCheck();
         });
+
+        // Auto logout after session expires (check every minute)
+        function setupSessionCheck() {
+            setInterval(() => {
+                const sessionExpiry = localStorage.getItem('adminSessionExpiry');
+                if (sessionExpiry && Date.now() > parseInt(sessionExpiry)) {
+                    console.log('[v0] Admin session expired, logging out...');
+                    localStorage.removeItem('adminSession');
+                    localStorage.removeItem('adminSessionExpiry');
+                    localStorage.removeItem('adminUsername');
+                    window.location.href = 'admin-login.html?error=expired';
+                }
+            }, 60000); // Check every minute
+        }
 
         // Tab Switching
         function switchTab(tab) {
@@ -795,12 +849,16 @@
             }
         }
 
-        // Logout
+        // Secure logout
         function logout() {
             if (confirm('Yakin ingin logout?')) {
+                console.log('[v0] Admin logout triggered');
                 localStorage.removeItem('adminSession');
+                localStorage.removeItem('adminSessionExpiry');
+                localStorage.removeItem('adminUsername');
                 window.location.href = 'admin-login.html';
             }
+        }
         }
 
         // Notification

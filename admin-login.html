@@ -227,11 +227,25 @@
         const errorMessage = document.getElementById('errorMessage');
         const successMessage = document.getElementById('successMessage');
 
-        // Check if already logged in on page load
+        // Security: Check if already logged in on page load
         window.addEventListener('load', () => {
-            if (localStorage.getItem('adminSession')) {
-                console.log('[v0] Admin session ditemukan, redirect...');
-                window.location.href = 'admin-dashboard.html';
+            const adminSession = localStorage.getItem('adminSession');
+            const sessionExpiry = localStorage.getItem('adminSessionExpiry');
+            
+            if (adminSession && sessionExpiry) {
+                const expiryTime = parseInt(sessionExpiry);
+                // Check if session is still valid (not expired)
+                if (Date.now() < expiryTime) {
+                    console.log('[v0] Valid admin session found, redirecting to dashboard...');
+                    window.location.href = 'admin-dashboard.html';
+                    return;
+                } else {
+                    // Session expired, clear it
+                    localStorage.removeItem('adminSession');
+                    localStorage.removeItem('adminSessionExpiry');
+                    localStorage.removeItem('adminUsername');
+                    console.log('[v0] Admin session expired');
+                }
             }
         });
 
@@ -241,7 +255,7 @@
             const username = usernameInput.value.trim();
             const password = passwordInput.value;
 
-            console.log('[v0] Login attempt:', { username, passwordLength: password.length });
+            console.log('[v0] Login attempt with username:', username);
 
             // Show loading state
             loginBtn.disabled = true;
@@ -250,19 +264,25 @@
             errorMessage.style.display = 'none';
             errorMessage.textContent = '';
 
-            // Simple admin login check
+            // Validate credentials
             if (username === DEFAULT_ADMIN.username && password === DEFAULT_ADMIN.password) {
-                console.log('[v0] Login credentials valid');
+                console.log('[v0] Admin credentials valid');
                 
-                // Store admin session in localStorage
-                const sessionData = {
+                // Create secure session with expiry (8 hours)
+                const sessionToken = btoa(JSON.stringify({
                     username: username,
-                    loginTime: new Date().toISOString(),
-                    token: btoa(username + ':' + Date.now())
-                };
-                
-                localStorage.setItem('adminSession', JSON.stringify(sessionData));
-                console.log('[v0] Admin session saved:', sessionData);
+                    timestamp: Date.now(),
+                    nonce: Math.random().toString(36).substr(2, 9)
+                }));
+
+                const sessionExpiry = Date.now() + (8 * 60 * 60 * 1000); // 8 hours
+
+                // Store session data
+                localStorage.setItem('adminSession', sessionToken);
+                localStorage.setItem('adminSessionExpiry', sessionExpiry.toString());
+                localStorage.setItem('adminUsername', username);
+
+                console.log('[v0] Admin session created, expiry:', new Date(sessionExpiry).toISOString());
 
                 successMessage.textContent = 'Login berhasil! Redirect ke dashboard...';
                 successMessage.style.display = 'block';
@@ -273,9 +293,7 @@
                     window.location.href = 'admin-dashboard.html';
                 }, 1500);
             } else {
-                console.log('[v0] Login credentials invalid');
-                console.log('[v0] Expected:', DEFAULT_ADMIN.username, DEFAULT_ADMIN.password);
-                console.log('[v0] Received:', username, password);
+                console.log('[v0] Invalid credentials');
                 
                 errorMessage.textContent = '❌ Username atau password salah! (Gunakan: admin / admin123)';
                 errorMessage.style.display = 'block';
@@ -288,6 +306,21 @@
                 passwordInput.focus();
             }
         });
+
+        // Auto logout after session expires (check every minute)
+        setInterval(() => {
+            const sessionExpiry = localStorage.getItem('adminSessionExpiry');
+            if (sessionExpiry && Date.now() > parseInt(sessionExpiry)) {
+                console.log('[v0] Admin session expired, clearing...');
+                localStorage.removeItem('adminSession');
+                localStorage.removeItem('adminSessionExpiry');
+                localStorage.removeItem('adminUsername');
+                // Optionally redirect to login page
+                if (window.location.pathname.includes('admin-dashboard')) {
+                    window.location.href = 'admin-login.html?session=expired';
+                }
+            }
+        }, 60000);
     </script>
 </body>
 </html>
