@@ -96,6 +96,14 @@
 
         .tab-content {
             display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .tab-content.active {
@@ -418,8 +426,8 @@
         </div>
 
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('games')"><i class="fas fa-gamepad"></i> Games</button>
-            <button class="tab-btn" onclick="switchTab('apps')"><i class="fas fa-mobile-alt"></i> Aplikasi</button>
+            <button class="tab-btn active" onclick="switchTab(this, 'games')"><i class="fas fa-gamepad"></i> Games</button>
+            <button class="tab-btn" onclick="switchTab(this, 'apps')"><i class="fas fa-mobile-alt"></i> Aplikasi</button>
         </div>
 
         <div id="games" class="tab-content active">
@@ -567,13 +575,30 @@
             setupAutoLogout();
         });
 
-        function switchTab(tab) {
+        function switchTab(button, tab) {
+            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tab).classList.add('active');
-            event.target.classList.add('active');
+            
+            // Show selected tab
+            const tabElement = document.getElementById(tab);
+            if (tabElement) {
+                tabElement.classList.add('active');
+            }
+            
+            // Mark button as active
+            if (button) {
+                button.classList.add('active');
+            }
 
-            if (tab === 'apps') loadApps();
+            // Load data for the tab
+            if (tab === 'apps') {
+                loadApps();
+            } else if (tab === 'games') {
+                loadGames();
+            }
+
+            console.log('[v0] Switched to tab:', tab);
         }
 
         async function loadGames() {
